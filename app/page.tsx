@@ -33,7 +33,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <Card className="bg-[linear-gradient(180deg,rgba(150,255,83,0.18),rgba(150,255,83,0.06))] py-4">
+        <Card className="bg-[linear-gradient(180deg,rgba(59,130,246,0.22),rgba(59,130,246,0.08))] py-4">
           <CardHeader className="pb-0">
             <div className="flex items-center justify-between">
               <div>
@@ -54,16 +54,16 @@ export default function DashboardPage() {
                 contribuyentes dentro del establecimiento
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-2xl border border-white/8 bg-black/20 p-3">
+            {/* <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-2xl border border-white/8 bg-primary/10 p-3">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Ultima visita</p>
                 <p className="mt-2 font-medium text-foreground">{latestVisit?.department ?? 'Sin datos'}</p>
               </div>
-              <div className="rounded-2xl border border-white/8 bg-black/20 p-3">
+              <div className="rounded-2xl border border-white/8 bg-primary/10 p-3">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Activas</p>
                 <p className="mt-2 font-medium text-foreground">{activeVisits.length}</p>
               </div>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               </div>
               <Badge
                 variant="outline"
-                className="w-fit border-primary/20 bg-primary/10 text-[10px] uppercase tracking-[0.16em] text-primary"
+                className="w-fit border-primary/30 bg-primary/15 text-[10px] uppercase tracking-[0.16em] text-primary dark:border-primary/20 dark:bg-primary/10"
               >
                 {sortedVisits.length} registros
               </Badge>
@@ -121,7 +121,7 @@ export default function DashboardPage() {
               {sortedVisits.slice(0, 4).map((visit) => (
                 <div
                   key={visit.id}
-                  className="rounded-2xl border border-white/8 bg-white/[0.03] p-4"
+                  className="rounded-2xl border border-border bg-muted/40 p-4 dark:border-white/8 dark:bg-white/[0.03]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -132,7 +132,7 @@ export default function DashboardPage() {
                     </div>
                     <Badge
                       variant="outline"
-                      className="border-white/8 bg-white/[0.03] text-[10px] uppercase tracking-[0.14em] text-muted-foreground"
+                      className="border-border bg-background text-[10px] uppercase tracking-[0.14em] text-muted-foreground dark:border-white/8 dark:bg-white/[0.03]"
                     >
                       {visit.status}
                     </Badge>

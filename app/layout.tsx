@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import { MainLayout } from '@/components/layout/main-layout'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -33,12 +34,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className="bg-background">
+    <html lang="es" className="bg-background" suppressHydrationWarning>
       <body className="font-sans antialiased text-foreground">
-        <MainLayout>
-          {children}
-        </MainLayout>
-        <Toaster position="top-right" />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <MainLayout>
+            {children}
+          </MainLayout>
+          <Toaster position="top-right" />
+        </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

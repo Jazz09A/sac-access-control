@@ -44,7 +44,7 @@ export function Sidebar() {
     <aside className="hidden min-h-full w-[248px] flex-col border-r border-white/8 bg-sidebar px-3 py-4 lg:flex xl:w-[272px] xl:px-4 xl:py-5">
       <div className="border-b border-white/8 px-3 pb-5">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_24px_rgba(148,255,74,0.35)]">
+          <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_24px_rgba(59,130,246,0.32)]">
             <ShieldCheck className="size-5" />
           </div>
           <div>
@@ -87,7 +87,7 @@ export function Sidebar() {
                 className={cn(
                   'h-12 w-full justify-start gap-3 rounded-2xl px-4 text-sm transition-all',
                   isActive
-                    ? 'bg-primary text-primary-foreground shadow-[0_0_28px_rgba(148,255,74,0.24)] hover:bg-primary/95'
+                    ? 'bg-primary text-primary-foreground shadow-[0_0_28px_rgba(59,130,246,0.26)] hover:bg-primary/95'
                     : 'text-muted-foreground hover:bg-white/[0.04] hover:text-sidebar-foreground'
                 )}
               >
