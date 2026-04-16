@@ -1,0 +1,40 @@
+import { z } from 'zod'
+import { ContributorType } from '@/types'
+
+/**
+ * Zod Schema for Contributor Validation
+ */
+
+export const contributorSchema = z.object({
+  rif: z
+    .string()
+    .min(1, 'RIF es requerido')
+    .regex(/^[VJE][-\d]{7,8}$/, 'RIF debe estar en formato válido (ej: V-12345678)'),
+  name: z
+    .string()
+    .min(1, 'Nombre es requerido')
+    .min(2, 'Nombre debe tener al menos 2 caracteres')
+    .max(100, 'Nombre no puede exceder 100 caracteres'),
+  type: z.enum([
+    ContributorType.NATURAL,
+    ContributorType.LEGAL,
+    ContributorType.REPRESENTATIVE,
+    ContributorType.MANAGER
+  ]),
+  occupation: z
+    .string()
+    .min(1, 'Ocupación es requerida')
+    .max(50, 'Ocupación no puede exceder 50 caracteres'),
+  phone: z
+    .string()
+    .min(1, 'Teléfono es requerido')
+    .regex(/^[\d\-\(\)\s]+$/, 'Formato de teléfono inválido')
+    .min(10, 'Teléfono debe tener al menos 10 dígitos'),
+  email: z
+    .string()
+    .email('Email inválido')
+    .optional()
+    .or(z.literal(''))
+})
+
+export type ContributorInput = z.infer<typeof contributorSchema>
