@@ -6,7 +6,7 @@ import { VisitStatus } from '@/types'
  */
 
 export const visitSchema = z.object({
-  entryDateTime: z.date().refine(
+  entryDateTime: z.coerce.date().refine(
     (date) => date <= new Date(),
     'Fecha de entrada no puede ser en el futuro'
   ),
@@ -34,7 +34,7 @@ export const visitSchema = z.object({
 })
 
 export const exitSchema = z.object({
-  exitDateTime: z.date().refine(
+  exitDateTime: z.coerce.date().refine(
     (date) => date <= new Date(),
     'Fecha de salida no puede ser en el futuro'
   ),

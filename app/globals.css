@@ -167,3 +167,27 @@ html.theme-animating *::after {
     transition-duration: 0ms !important;
   }
 }
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.route-transition-enter {
+  animation: route-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-transition-enter {
+    animation: none !important;
+  }
+}

@@ -30,11 +30,11 @@ export const navigation = [
     href: '/search',
     icon: Search
   },
-  {
-    name: 'Contribuyentes',
-    href: '/contributors',
-    icon: Users
-  }
+  // {
+  //   name: 'Contribuyentes',
+  //   href: '/contributors',
+  //   icon: Users
+  // }
 ]
 
 export function Sidebar() {

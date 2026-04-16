@@ -12,6 +12,36 @@ export const getVenezuelaTime = (date: Date = new Date()): Date => {
   return new Date(vzDateStr)
 }
 
+const VENEZUELA_TIMEZONE = 'America/Caracas'
+const VENEZUELA_OFFSET = '-04:00'
+
+export const getVenezuelaDateTimeInput = (
+  date: Date = new Date()
+): { date: string; time: string } => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: VENEZUELA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(date)
+
+  const map = Object.fromEntries(parts.map((part) => [part.type, part.value]))
+  return {
+    date: `${map.year}-${map.month}-${map.day}`,
+    time: `${map.hour}:${map.minute}`,
+  }
+}
+
+export const buildVenezuelaDateTime = (
+  dateInput: string,
+  timeInput: string
+): Date => {
+  return new Date(`${dateInput}T${timeInput}:00${VENEZUELA_OFFSET}`)
+}
+
 export const formatDateTime = (date: Date | string): string => {
   const d = typeof date === 'string' ? new Date(date) : date
   return format(d, 'dd/MM/yyyy HH:mm', { locale: es })

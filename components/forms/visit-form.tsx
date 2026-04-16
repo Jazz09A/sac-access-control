@@ -13,6 +13,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { DEPARTMENTS, VISIT_REASONS } from '@/utils/constants'
+import { buildVenezuelaDateTime, getVenezuelaDateTimeInput } from '@/utils/formatters'
 
 interface VisitFormProps<T extends FieldValues> {
   register: UseFormRegister<T>
@@ -53,41 +54,71 @@ export function VisitForm<T extends FieldValues>({
 
       <CardContent className="space-y-5 pt-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
-            <Label htmlFor="date" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Fecha de entrada <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="date"
-              type="date"
-              aria-invalid={Boolean(getFieldError('visit.entryDateTime'))}
-              {...register('visit.entryDateTime' as Path<T>)}
-              className="bg-background"
-            />
-            {getFieldError('visit.entryDateTime') && (
-              <p className="text-xs text-destructive">
-                {getFieldError('visit.entryDateTime')}
-              </p>
-            )}
-          </div>
+          <Controller
+            name={'visit.entryDateTime' as Path<T>}
+            control={control}
+            render={({ field }) => {
+              const rawValue = field.value as unknown
+              const parsedDate =
+                rawValue && (typeof rawValue === 'string' || typeof rawValue === 'number' || rawValue instanceof Date)
+                  ? new Date(rawValue)
+                  : new Date()
+              const safeDate = Number.isNaN(parsedDate.getTime()) ? new Date() : parsedDate
+              const venezuelaDateTime = getVenezuelaDateTimeInput(safeDate)
 
-          <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
-            <Label htmlFor="time" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Hora de entrada <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="time"
-              type="time"
-              aria-invalid={Boolean(getFieldError('visit.entryTime'))}
-              {...register('visit.entryTime' as Path<T>)}
-              className="bg-background"
-            />
-            {getFieldError('visit.entryTime') && (
-              <p className="text-xs text-destructive">
-                {getFieldError('visit.entryTime')}
-              </p>
-            )}
-          </div>
+              return (
+                <>
+                  <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
+                    <Label htmlFor="date" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      Fecha de entrada <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={venezuelaDateTime.date}
+                      aria-invalid={Boolean(getFieldError('visit.entryDateTime'))}
+                      onChange={(event) => {
+                        const nextDate = buildVenezuelaDateTime(
+                          event.target.value,
+                          venezuelaDateTime.time
+                        )
+                        field.onChange(nextDate)
+                      }}
+                      className="bg-background"
+                    />
+                    {getFieldError('visit.entryDateTime') && (
+                      <p className="text-xs text-destructive">
+                        {getFieldError('visit.entryDateTime')}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
+                    <Label htmlFor="time" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      Hora de entrada <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={venezuelaDateTime.time}
+                      aria-invalid={Boolean(getFieldError('visit.entryDateTime'))}
+                      onChange={(event) => {
+                        const nextDate = buildVenezuelaDateTime(
+                          venezuelaDateTime.date,
+                          event.target.value
+                        )
+                        field.onChange(nextDate)
+                      }}
+                      className="bg-background"
+                    />
+                    <p className="text-[11px] text-muted-foreground">
+                      Se autocompleta con la hora actual de Venezuela y puedes editarla.
+                    </p>
+                  </div>
+                </>
+              )
+            }}
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -127,7 +158,7 @@ export function VisitForm<T extends FieldValues>({
             )}
           </div>
 
-          <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
+          {/* <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
             <Label htmlFor="department" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Departamento <span className="text-destructive">*</span>
             </Label>
@@ -161,8 +192,8 @@ export function VisitForm<T extends FieldValues>({
                 {getFieldError('visit.department')}
               </p>
             )}
-          </div>
-        </div>
+          </div>*/}
+        </div> 
 
         <div className="space-y-4 rounded-[18px] border border-border/60 bg-muted/20 p-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.4fr_1fr]">
@@ -184,7 +215,7 @@ export function VisitForm<T extends FieldValues>({
               )}
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="fileNumber" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Numero de expediente
               </Label>
@@ -194,7 +225,7 @@ export function VisitForm<T extends FieldValues>({
                 {...register('visit.fileNumber' as Path<T>)}
                 className="bg-background"
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="space-y-2">

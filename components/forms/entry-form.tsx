@@ -10,6 +10,7 @@ import { ContributorForm } from './contributor-form'
 import { VisitForm } from './visit-form'
 import { PhotoUpload } from './photo-upload'
 import { entrySchema, type EntryInput } from '@/schemas/entry'
+import { buildVenezuelaDateTime, getVenezuelaDateTimeInput } from '@/utils/formatters'
 
 interface EntryFormProps {
   onSuccess?: (data: EntryInput) => void
@@ -17,6 +18,7 @@ interface EntryFormProps {
 
 export function EntryForm({ onSuccess }: EntryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const nowInVenezuela = getVenezuelaDateTimeInput()
 
   const {
     register,
@@ -37,7 +39,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
         email: ''
       },
       visit: {
-        entryDateTime: new Date(),
+        entryDateTime: buildVenezuelaDateTime(nowInVenezuela.date, nowInVenezuela.time),
         reason: '',
         observations: '',
         officer: '',
@@ -100,7 +102,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
         <Button
           type="submit"
           size="lg"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !formState.isValid}
           className="min-w-[220px] flex-1"
         >
           {isSubmitting ? (
