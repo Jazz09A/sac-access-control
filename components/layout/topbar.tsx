@@ -22,12 +22,12 @@ export function Topbar() {
 
   return (
     <header className="border-b border-white/8 bg-background/80 backdrop-blur-xl">
-      <div className="flex h-20 items-center justify-between gap-6 px-6 lg:px-8">
+      <div className="flex min-h-16 items-center justify-between gap-3 px-4 py-3 sm:min-h-18 sm:px-5 lg:h-20 lg:px-8 lg:py-0">
         <div className="min-w-0">
           <div className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
             Dashboard / Resumen
           </div>
-          <h2 className="mt-2 truncate text-2xl font-semibold tracking-tight text-foreground">
+          <h2 className="mt-1 truncate text-lg font-semibold tracking-tight text-foreground sm:text-xl lg:mt-2 lg:text-2xl">
             Panel de Control
           </h2>
         </div>
@@ -38,16 +38,16 @@ export function Topbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground">
+          <Button variant="ghost" size="icon" className="hidden h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground sm:inline-flex">
             <Moon className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground sm:h-10 sm:w-10">
             <Bell className="w-4 h-4" />
           </Button>
           <Button variant="ghost" size="icon" className="hidden h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground md:flex">
             <Globe className="w-4 h-4" />
           </Button>
-          <div className="ml-2 flex items-center gap-3 rounded-full border border-white/8 bg-white/[0.03] px-2 py-1.5">
+          <div className="ml-1 flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-1.5 py-1 sm:ml-2 sm:gap-3 sm:px-2 sm:py-1.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_0_18px_rgba(148,255,74,0.28)]">
               <User className="w-4 h-4" />
             </div>
@@ -56,7 +56,7 @@ export function Topbar() {
               <p className="text-xs text-muted-foreground">Operador principal</p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground">
+          <Button variant="ghost" size="icon" className="hidden h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground sm:inline-flex">
             <Settings className="w-5 h-5" />
           </Button>
         </div>

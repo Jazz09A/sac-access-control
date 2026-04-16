@@ -14,7 +14,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
-const navigation = [
+export const navigation = [
   {
     name: 'Dashboard',
     href: '/',
@@ -41,7 +41,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex min-h-full w-[272px] flex-col border-r border-white/8 bg-sidebar px-4 py-5">
+    <aside className="hidden min-h-full w-[248px] flex-col border-r border-white/8 bg-sidebar px-3 py-4 lg:flex xl:w-[272px] xl:px-4 xl:py-5">
       <div className="border-b border-white/8 px-3 pb-5">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-[0_0_24px_rgba(148,255,74,0.35)]">
@@ -112,5 +112,37 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+  )
+}
+
+export function MobileNav() {
+  const pathname = usePathname()
+
+  return (
+    <div className="border-b border-white/8 px-4 py-3 lg:hidden">
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {navigation.map((item) => {
+          const isActive = pathname === item.href
+          const Icon = item.icon
+
+          return (
+            <Link key={item.href} href={item.href} className="shrink-0">
+              <Button
+                variant="ghost"
+                className={cn(
+                  'h-10 rounded-xl px-3 text-sm',
+                  isActive
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/95'
+                    : 'border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground'
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {item.name}
+              </Button>
+            </Link>
+          )
+        })}
+      </div>
+    </div>
   )
 }

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Visit, VisitStatus } from '@/types'
-import { formatDateTime, formatTimeAgo } from '@/utils/formatters'
+import { formatTimeAgo } from '@/utils/formatters'
 import { Eye, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -26,7 +26,7 @@ export function RecentVisits({ visits, title = 'Visitas Recientes' }: RecentVisi
   }
 
   return (
-    <Card className="h-full gap-4 bg-white/[0.03] py-5">
+    <Card className="h-full gap-3 bg-white/[0.03] py-4">
       <CardHeader className="pb-0">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -40,7 +40,7 @@ export function RecentVisits({ visits, title = 'Visitas Recientes' }: RecentVisi
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         <div className="space-y-3">
           {visits.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
@@ -50,31 +50,29 @@ export function RecentVisits({ visits, title = 'Visitas Recientes' }: RecentVisi
             visits.map((visit) => (
               <div
                 key={visit.id}
-                className="flex items-center justify-between p-4 border border-border/60 rounded-xl hover:border-primary/30 transition-all hover:bg-primary/[0.02] group"
+                className="group flex items-center justify-between rounded-xl border border-border/60 p-3 transition-all hover:border-primary/30 hover:bg-primary/[0.02]"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3">
-                    <h4 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <h4 className="min-w-0 truncate text-sm font-semibold transition-colors group-hover:text-primary">
                       {visit.contributor.name}
                     </h4>
                     <Badge variant="outline" className={cn('h-5 border px-2 py-0 text-[10px] font-medium uppercase tracking-[0.14em]', statusClasses[visit.status])}>
                       {statusLabel[visit.status]}
                     </Badge>
                   </div>
-                  <div className="flex flex-col gap-0.5 mt-2">
+                  <div className="mt-2 flex flex-col gap-0.5">
                     <p className="text-[11px] text-muted-foreground font-medium">
                       {formatTimeAgo(visit.entryDateTime)}
                     </p>
                     <p className="text-[11px] text-muted-foreground line-clamp-1">
                       {visit.reason}
                     </p>
-                    <p className="text-[11px] text-foreground/70">
-                      {visit.department} · {formatDateTime(visit.entryDateTime)}
-                    </p>
+                    <p className="text-[11px] text-foreground/70">{visit.department}</p>
                   </div>
                 </div>
                 <Link href={`/${visit.id}`}>
-                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full border border-white/8 bg-white/[0.03] opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full border border-white/8 bg-white/[0.03] opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                     <Eye className="w-4 h-4" />
                   </Button>
                 </Link>

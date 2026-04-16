@@ -16,11 +16,16 @@ import { HourlyData } from '@/types'
 interface ChartSectionProps {
   data: HourlyData[]
   title?: string
+  height?: number
 }
 
-export function ChartSection({ data, title = 'Visitantes por Hora' }: ChartSectionProps) {
+export function ChartSection({
+  data,
+  title = 'Visitantes por Hora',
+  height = 248
+}: ChartSectionProps) {
   return (
-    <Card className="bg-white/[0.03] py-5">
+    <Card className="bg-white/[0.03] py-4">
       <CardHeader className="pb-0">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -34,8 +39,8 @@ export function ChartSection({ data, title = 'Visitantes por Hora' }: ChartSecti
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
+      <CardContent className="pt-4">
+        <ResponsiveContainer width="100%" height={height}>
           <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
             <XAxis
