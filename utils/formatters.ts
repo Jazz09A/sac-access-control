@@ -1,5 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns'
-import { es } from 'date-fns/locale'
+import { enUS, es } from 'date-fns/locale'
+import type { AppLocale } from '@/lib/i18n-messages'
 
 /**
  * Date and time formatting utilities
@@ -60,6 +61,15 @@ export const formatTime = (date: Date | string): string => {
 export const formatTimeAgo = (date: Date | string): string => {
   const d = typeof date === 'string' ? new Date(date) : date
   return formatDistanceToNow(d, { addSuffix: true, locale: es })
+}
+
+/** Relative time (“hace X minutos” / “X minutes ago”) según idioma de la consola. */
+export function formatTimeAgoLocale(date: Date | string, locale: AppLocale): string {
+  const d = typeof date === 'string' ? new Date(date) : date
+  return formatDistanceToNow(d, {
+    addSuffix: true,
+    locale: locale === 'en' ? enUS : es,
+  })
 }
 
 export const formatDuration = (startDate: Date | string, endDate: Date | string): string => {

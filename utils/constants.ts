@@ -35,7 +35,7 @@ export const DEPARTMENTS = [
 ]
 
 export const VISIT_REASONS = [
-  'Reunión de Negocios',
+  'Atención o consulta comercial',
   'Consultoría',
   'Servicio Técnico',
   'Entrega de Documentos',
