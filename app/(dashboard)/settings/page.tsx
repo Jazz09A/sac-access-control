@@ -5,12 +5,10 @@ import Link from 'next/link'
 import { ArrowLeft, Bell, Globe, Mail, Shield, UserRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { useLocale } from '@/components/providers/locale-provider'
-import type { AppLocale } from '@/lib/i18n-messages'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
 
 function persistPrefVisits(v: boolean) {
@@ -30,7 +28,7 @@ function persistPrefSystem(v: boolean) {
 }
 
 export default function SettingsPage() {
-  const { t, locale, setLocale } = useLocale()
+  const { t } = useLocale()
   const [username, setUsername] = useState<string>('')
   const [email, setEmail] = useState('')
   const [notifyVisits, setNotifyVisits] = useState(true)
@@ -134,7 +132,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        <Card id="idioma" className="scroll-mt-24 border-white/10 bg-card/80">
+        <Card id="idioma-region" className="scroll-mt-24 border-white/10 bg-card/80">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Globe className="h-5 w-5 text-primary" />
@@ -143,26 +141,8 @@ export default function SettingsPage() {
             <CardDescription>{t('settings.langDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <Label>{t('settings.langLabel')}</Label>
-              <RadioGroup
-                value={locale}
-                onValueChange={(v) => setLocale(v as AppLocale)}
-                className="flex flex-col gap-3 sm:flex-row sm:gap-6"
-              >
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="es" id="lang-es" />
-                  <Label htmlFor="lang-es" className="cursor-pointer font-normal">
-                    {t('topbar.langEs')}
-                  </Label>
-                </div>
-                <div className="flex items-center gap-3">
-                  <RadioGroupItem value="en" id="lang-en" />
-                  <Label htmlFor="lang-en" className="cursor-pointer font-normal">
-                    {t('topbar.langEn')}
-                  </Label>
-                </div>
-              </RadioGroup>
+            <div className="rounded-xl border border-white/8 bg-white/[0.02] p-4">
+              <p className="text-sm text-foreground">{t('settings.langFixed')}</p>
             </div>
             <div className="space-y-1 rounded-xl border border-white/8 bg-white/[0.02] p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

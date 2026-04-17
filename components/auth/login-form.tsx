@@ -19,20 +19,25 @@ export function LoginForm() {
     e.preventDefault()
     setError(null)
     setLoading(true)
+    console.log('[LoginForm] Intentando login...')
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username.trim(), password }),
       })
+      console.log('[LoginForm] Response status:', res.status)
       const data = await res.json().catch(() => ({}))
+      console.log('[LoginForm] Response data:', data)
       if (!res.ok) {
         setError(typeof data.detail === 'string' ? data.detail : 'Credenciales incorrectas')
         return
       }
-      router.refresh()
-      router.replace('/')
-    } catch {
+      console.log('[LoginForm] Login exitoso, redirigiendo...')
+      // Usar window.location para forzar un full reload y que el middleware detecte la cookie
+      window.location.href = '/'
+    } catch (err) {
+      console.error('[LoginForm] Error:', err)
       setError('No se pudo conectar. ¿Está el backend en marcha?')
     } finally {
       setLoading(false)
@@ -54,7 +59,7 @@ export function LoginForm() {
         <form onSubmit={onSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
-              Usuario
+              Cédula
             </Label>
             <div className="relative">
               <UserRound className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -65,7 +70,7 @@ export function LoginForm() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="h-11 rounded-xl border-white/10 bg-background/50 pl-10"
-                placeholder="Ej. admin"
+                placeholder="Ej. 19344555"
                 required
               />
             </div>

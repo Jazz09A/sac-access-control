@@ -1,0 +1,271 @@
+export type AppLocale = 'es' | 'en'
+
+export const messages: Record<AppLocale, Record<string, string>> = {
+  es: {
+    // Dashboard
+    'dashboard.heading': 'Dashboard',
+    'dashboard.intro': 'Resumen operativo del control de ingresos y salidas con foco en ritmo de atención, permanencia y trazabilidad de visitas.',
+    'dashboard.executiveBadge': 'Resumen ejecutivo',
+    'dashboard.statusLabel': 'Estado actual',
+    'dashboard.currentActivity': 'Actividad en curso',
+    'dashboard.taxpayersInDivision': 'contribuyentes dentro del establecimiento',
+
+    // Métricas
+    'dashboard.metric.entriesTitle': 'Entradas Hoy',
+    'dashboard.metric.entriesDesc': 'Total de contribuyentes registrados',
+    'dashboard.metric.insideTitle': 'Dentro del Establecimiento',
+    'dashboard.metric.insideDesc': 'Visitantes activos en el momento',
+    'dashboard.metric.attendedTitle': 'Visitas Atendidas',
+    'dashboard.metric.attendedDesc': 'Visitas completadas hoy',
+    'dashboard.metric.pendingTitle': 'Visitas Pendientes',
+    'dashboard.metric.pendingDesc': 'Requieren seguimiento',
+
+    // Tendencias
+    'dashboard.trend.vsYesterday': 'vs. ayer',
+    'dashboard.trend.vsLastHour': 'vs. hora previa',
+    'dashboard.trend.newToday': 'nuevas hoy',
+
+    // Secciones dashboard
+    'dashboard.traceLabel': 'Trazabilidad reciente',
+    'dashboard.traceTitle': 'Actividad operativa',
+    'dashboard.recordsCount': '{n} registros',
+    'dashboard.quickFollowLabel': 'Seguimiento rápido',
+    'dashboard.dayStatusTitle': 'Estado del día',
+
+    // Mini cards
+    'dashboard.mini.attended': 'Atendidas',
+    'dashboard.mini.pending': 'Pendientes',
+
+    // Estados de visita
+    'dashboard.status.espera': 'En espera',
+    'dashboard.status.atendido': 'Atendida',
+    'dashboard.status.finalizado': 'Finalizada',
+    'dashboard.status.rechazado': 'Rechazada',
+    'dashboard.status.reprogramado': 'Reprogramada',
+
+    // Topbar
+    'topbar.breadcrumb': 'Consola',
+    'topbar.title': 'Control de Ingresos',
+    'topbar.langButton': 'Idioma',
+    'topbar.langMenuTitle': 'Seleccionar idioma',
+    'topbar.langEs': 'Español',
+    'topbar.langEn': 'Inglés',
+    'topbar.accountSubtitle': 'Operador',
+    'topbar.sessionLabel': 'Sesión activa',
+    'topbar.role': 'Administrador',
+    'topbar.editProfile': 'Editar perfil',
+    'topbar.preferences': 'Preferencias',
+    'topbar.notifications': 'Notificaciones',
+    'topbar.soon': 'Próximamente',
+    'topbar.moreSettings': 'Más ajustes',
+    'topbar.languageRegion': 'Idioma y región',
+    'topbar.helpShortcuts': 'Ayuda y atajos',
+    'topbar.appearance': 'Apariencia',
+    'topbar.lightMode': 'Modo claro',
+    'topbar.darkMode': 'Modo oscuro',
+    'topbar.logout': 'Cerrar sesión',
+    'topbar.alertsTooltip': 'Alertas',
+
+    // Sidebar
+    'nav.dashboard': 'Dashboard',
+    'nav.entry': 'Registrar Entrada',
+    'nav.search': 'Buscar Visitas',
+    'nav.settings': 'Configuracion',
+    'sidebar.brand': 'Control de Ingresos',
+    'sidebar.subtitle': 'Consola administrativa',
+    'sidebar.shift': 'Turno activo',
+    'sidebar.shiftTitle': 'Operación de acceso',
+    'sidebar.shiftDesc': 'Monitoreo continuo de entradas, permanencia y salida de contribuyentes.',
+    'sidebar.nav': 'Navegación',
+    'sidebar.system': 'Estado del sistema',
+    'sidebar.systemVersion': 'Sistema v1.0',
+    'sidebar.systemDesc': 'Consola preparada para seguimiento diario y trazabilidad operativa.',
+
+    // Recent visits
+    'recent.sectionLabel': 'Seguimiento',
+    'recent.title': 'Visitas Recientes',
+    'recent.empty': 'No hay visitas registradas',
+
+    // Settings
+    'settings.title': 'Configuración',
+    'settings.subtitle': 'Personaliza tu experiencia y gestiona tu cuenta',
+    'settings.back': 'Volver',
+    'settings.saved': 'Configuración guardada correctamente',
+    'settings.profileTitle': 'Perfil de operador',
+    'settings.profileDesc': 'Tu información de cuenta y contacto',
+    'settings.user': 'Usuario',
+    'settings.email': 'Correo electrónico',
+    'settings.emailPlaceholder': 'tu.email@sac.gob.ve',
+    'settings.save': 'Guardar cambios',
+    'settings.langTitle': 'Idioma y región',
+    'settings.langDesc': 'La consola usa espanol como idioma predeterminado.',
+    'settings.langLabel': 'Idioma de la interfaz',
+    'settings.langFixed': 'La interfaz esta fija en espanol por ahora.',
+    'settings.regionLabel': 'Región',
+    'settings.regionValue': 'Venezuela (es-VE)',
+    'settings.dateFormat': 'Formato de fecha',
+    'settings.dateFormatValue': 'DD/MM/YYYY',
+    'settings.prefsTitle': 'Preferencias',
+    'settings.prefsDesc': 'Personaliza notificaciones y comportamiento de la consola',
+    'settings.prefVisits': 'Notificar nuevas visitas',
+    'settings.prefVisitsHint': 'Mostrar alerta cuando llegue un contribuyente',
+    'settings.prefSystem': 'Notificaciones del sistema',
+    'settings.prefSystemHint': 'Alertas sobre mantenimiento y actualizaciones',
+    'settings.securityTitle': 'Seguridad',
+    'settings.securityDesc': 'Gestiona tu contraseña y opciones de seguridad',
+    'settings.securityBody': 'Las credenciales se administran desde el backend. Contacta al administrador para cambios de contraseña.',
+
+    // Help
+    'help.title': 'Ayuda y atajos de teclado',
+    'help.intro': 'Utiliza estos atajos para navegar más rápido por la consola.',
+    'help.colShortcut': 'Atajo',
+    'help.colAction': 'Acción',
+    'help.row1k': 'Ctrl + K',
+    'help.row1v': 'Abrir acciones rapidas',
+    'help.row2k': 'Ctrl + /',
+    'help.row2v': 'Abrir ayuda y atajos',
+    'help.row3k': 'Esc',
+    'help.row3v': 'Cerrar dialogos o menus',
+    'help.contact': '¿Necesitas ayuda?',
+    'help.contactBody': 'Contacta al administrador del sistema o revisa la documentación técnica.',
+    'help.close': 'Cerrar',
+
+    // Errores
+    'error.loading': 'Error al cargar datos',
+    'error.tryAgain': 'Intenta nuevamente',
+  },
+
+  en: {
+    // Dashboard
+    'dashboard.heading': 'Dashboard',
+    'dashboard.intro': 'Operational summary of entry and exit control with focus on service pace, dwell time and visit traceability.',
+    'dashboard.executiveBadge': 'Executive summary',
+    'dashboard.statusLabel': 'Current status',
+    'dashboard.currentActivity': 'Current activity',
+    'dashboard.taxpayersInDivision': 'taxpayers inside the facility',
+
+    // Metrics
+    'dashboard.metric.entriesTitle': 'Entries Today',
+    'dashboard.metric.entriesDesc': 'Total registered taxpayers',
+    'dashboard.metric.insideTitle': 'Inside Facility',
+    'dashboard.metric.insideDesc': 'Active visitors at the moment',
+    'dashboard.metric.attendedTitle': 'Attended Visits',
+    'dashboard.metric.attendedDesc': 'Visits completed today',
+    'dashboard.metric.pendingTitle': 'Pending Visits',
+    'dashboard.metric.pendingDesc': 'Require follow-up',
+
+    // Trends
+    'dashboard.trend.vsYesterday': 'vs. yesterday',
+    'dashboard.trend.vsLastHour': 'vs. last hour',
+    'dashboard.trend.newToday': 'new today',
+
+    // Dashboard sections
+    'dashboard.traceLabel': 'Recent traceability',
+    'dashboard.traceTitle': 'Operational activity',
+    'dashboard.recordsCount': '{n} records',
+    'dashboard.quickFollowLabel': 'Quick follow-up',
+    'dashboard.dayStatusTitle': 'Day status',
+
+    // Mini cards
+    'dashboard.mini.attended': 'Attended',
+    'dashboard.mini.pending': 'Pending',
+
+    // Visit status
+    'dashboard.status.espera': 'Waiting',
+    'dashboard.status.atendido': 'Attended',
+    'dashboard.status.finalizado': 'Finished',
+    'dashboard.status.rechazado': 'Rejected',
+    'dashboard.status.reprogramado': 'Rescheduled',
+
+    // Topbar
+    'topbar.breadcrumb': 'Console',
+    'topbar.title': 'Access Control',
+    'topbar.langButton': 'Language',
+    'topbar.langMenuTitle': 'Select language',
+    'topbar.langEs': 'Spanish',
+    'topbar.langEn': 'English',
+    'topbar.accountSubtitle': 'Operator',
+    'topbar.sessionLabel': 'Active session',
+    'topbar.role': 'Administrator',
+    'topbar.editProfile': 'Edit profile',
+    'topbar.preferences': 'Preferences',
+    'topbar.notifications': 'Notifications',
+    'topbar.soon': 'Soon',
+    'topbar.moreSettings': 'More settings',
+    'topbar.languageRegion': 'Language and region',
+    'topbar.helpShortcuts': 'Help and shortcuts',
+    'topbar.appearance': 'Appearance',
+    'topbar.lightMode': 'Light mode',
+    'topbar.darkMode': 'Dark mode',
+    'topbar.logout': 'Sign out',
+    'topbar.alertsTooltip': 'Alerts',
+
+    // Sidebar
+    'nav.dashboard': 'Dashboard',
+    'nav.entry': 'Register Entry',
+    'nav.search': 'Search Visits',
+    'nav.settings': 'Settings',
+    'sidebar.brand': 'Access Control',
+    'sidebar.subtitle': 'Admin console',
+    'sidebar.shift': 'Active shift',
+    'sidebar.shiftTitle': 'Access operation',
+    'sidebar.shiftDesc': 'Continuous monitoring of entries, dwell time and taxpayer exits.',
+    'sidebar.nav': 'Navigation',
+    'sidebar.system': 'System status',
+    'sidebar.systemVersion': 'System v1.0',
+    'sidebar.systemDesc': 'Console ready for daily tracking and operational traceability.',
+
+    // Recent visits
+    'recent.sectionLabel': 'Tracking',
+    'recent.title': 'Recent Visits',
+    'recent.empty': 'No visits registered',
+
+    // Settings
+    'settings.title': 'Settings',
+    'settings.subtitle': 'Customize your experience and manage your account',
+    'settings.back': 'Back',
+    'settings.saved': 'Settings saved successfully',
+    'settings.profileTitle': 'Operator profile',
+    'settings.profileDesc': 'Your account and contact information',
+    'settings.user': 'User',
+    'settings.email': 'Email',
+    'settings.emailPlaceholder': 'your.email@sac.gob.ve',
+    'settings.save': 'Save changes',
+    'settings.langTitle': 'Language and region',
+    'settings.langDesc': 'The console uses Spanish as the default language.',
+    'settings.langLabel': 'Interface language',
+    'settings.langFixed': 'The interface is currently fixed in Spanish.',
+    'settings.regionLabel': 'Region',
+    'settings.regionValue': 'Venezuela (es-VE)',
+    'settings.dateFormat': 'Date format',
+    'settings.dateFormatValue': 'DD/MM/YYYY',
+    'settings.prefsTitle': 'Preferences',
+    'settings.prefsDesc': 'Customize notifications and console behavior',
+    'settings.prefVisits': 'Notify new visits',
+    'settings.prefVisitsHint': 'Show alert when a taxpayer arrives',
+    'settings.prefSystem': 'System notifications',
+    'settings.prefSystemHint': 'Alerts about maintenance and updates',
+    'settings.securityTitle': 'Security',
+    'settings.securityDesc': 'Manage your password and security options',
+    'settings.securityBody': 'Credentials are managed from the backend. Contact the administrator for password changes.',
+
+    // Help
+    'help.title': 'Help and keyboard shortcuts',
+    'help.intro': 'Use these shortcuts to navigate the console faster.',
+    'help.colShortcut': 'Shortcut',
+    'help.colAction': 'Action',
+    'help.row1k': 'Ctrl + K',
+    'help.row1v': 'Open quick actions',
+    'help.row2k': 'Ctrl + /',
+    'help.row2v': 'Open help and shortcuts',
+    'help.row3k': 'Esc',
+    'help.row3v': 'Close dialogs or menus',
+    'help.contact': 'Need help?',
+    'help.contactBody': 'Contact the system administrator or check the technical documentation.',
+    'help.close': 'Close',
+
+    // Errors
+    'error.loading': 'Error loading data',
+    'error.tryAgain': 'Try again',
+  },
+}

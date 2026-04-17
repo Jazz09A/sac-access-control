@@ -19,7 +19,6 @@ IMPLEMENTATION_STATUS.md
 .cursor/
 LICENSE
 .cursor/
-lib
 .env*
 .env.local
 .env.development.local

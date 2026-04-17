@@ -7,7 +7,6 @@ import {
   ChevronDown,
   Clock,
   HelpCircle,
-  Languages,
   LogOut,
   Moon,
   Settings,
@@ -32,12 +31,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { HelpDialog } from '@/components/layout/help-dialog'
 import { useLocale } from '@/components/providers/locale-provider'
-import type { AppLocale } from '@/lib/i18n-messages'
 import { useTheme } from 'next-themes'
 
 export function Topbar() {
   const router = useRouter()
-  const { t, locale, setLocale } = useLocale()
+  const { t } = useLocale()
   const [currentDateTime, setCurrentDateTime] = useState<string>('')
   const [mounted, setMounted] = useState(false)
   const [displayName, setDisplayName] = useState<string>('Operador')
@@ -62,8 +60,8 @@ export function Topbar() {
       try {
         const res = await fetch('/api/auth/me')
         const data = await res.json().catch(() => ({}))
-        if (!cancelled && res.ok && data?.username) {
-          const u = String(data.username)
+        if (!cancelled && res.ok && (data?.fullName || data?.username)) {
+          const u = String(data.fullName ?? data.username)
           setDisplayName(u.charAt(0).toUpperCase() + u.slice(1))
         }
       } catch {
@@ -135,39 +133,6 @@ export function Topbar() {
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hidden h-10 w-10 rounded-full border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground md:inline-flex"
-                  aria-label={t('topbar.langButton')}
-                  title={t('topbar.langButton')}
-                >
-                  <Languages className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-52 rounded-xl border-white/10 bg-popover/95 p-2 backdrop-blur-xl"
-                sideOffset={8}
-              >
-                <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                  {t('topbar.langMenuTitle')}
-                </DropdownMenuLabel>
-                <DropdownMenuRadioGroup
-                  value={locale}
-                  onValueChange={(v) => setLocale(v as AppLocale)}
-                >
-                  <DropdownMenuRadioItem value="es" className="rounded-lg">
-                    {t('topbar.langEs')}
-                  </DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="en" className="rounded-lg">
-                    {t('topbar.langEn')}
-                  </DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
                 <button
                   type="button"
                   className="ml-1 flex max-w-[220px] items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-1.5 py-1 text-left outline-none transition-colors hover:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-ring sm:ml-2 sm:gap-3 sm:px-2 sm:py-1.5"
@@ -223,9 +188,9 @@ export function Topbar() {
                   <DropdownMenuSubContent className="rounded-xl border-white/10 bg-popover/95 p-2 backdrop-blur-xl">
                     <DropdownMenuItem
                       className="cursor-pointer gap-2 rounded-lg py-2"
-                      onClick={() => router.push('/settings#idioma')}
+                      onClick={() => router.push('/settings#idioma-region')}
                     >
-                      <Languages className="h-4 w-4" />
+                      <Settings className="h-4 w-4" />
                       {t('topbar.languageRegion')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
