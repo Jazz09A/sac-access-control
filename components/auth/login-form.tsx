@@ -27,6 +27,7 @@ export function LoginForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
+    e.stopPropagation()
     setError(null)
     setLoading(true)
     console.log('[LoginForm] Intentando login...')
@@ -37,15 +38,31 @@ export function LoginForm() {
         body: JSON.stringify({ username: username.trim(), password }),
       })
       console.log('[LoginForm] Response status:', res.status)
-      const data = await res.json().catch(() => ({}))
+
+      let data
+      try {
+        data = await res.json()
+      } catch (parseErr) {
+        console.error('[LoginForm] Error parsing response:', parseErr)
+        setError('Error al procesar la respuesta del servidor')
+        return
+      }
+
       console.log('[LoginForm] Response data:', data)
+
       if (!res.ok) {
         setError(typeof data.detail === 'string' ? data.detail : 'Credenciales incorrectas')
         return
       }
-      console.log('[LoginForm] Login exitoso, redirigiendo...')
-      // Usar window.location para forzar un full reload y que el middleware detecte la cookie
-      window.location.href = '/'
+
+      if (data.ok === true) {
+        console.log('[LoginForm] Login exitoso, redirigiendo...')
+        // Usar window.location para forzar un full reload y que el middleware detecte la cookie
+        window.location.href = '/'
+      } else {
+        console.error('[LoginForm] Respuesta inesperada:', data)
+        setError('Respuesta inesperada del servidor')
+      }
     } catch (err) {
       console.error('[LoginForm] Error:', err)
       setError('No se pudo conectar. ¿Está el backend en marcha?')
@@ -66,7 +83,7 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} method="POST" action="/api/auth/login" className="space-y-5">
+        <form onSubmit={onSubmit} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
               Cédula
