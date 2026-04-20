@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Loader2, Lock, ShieldCheck, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,58 +8,68 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function LoginForm() {
-  const router = useRouter()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // Clear credentials from URL if present (security: prevent sharing links with passwords)
+  // Debug: log when component mounts
   useEffect(() => {
+    console.log('[LoginForm] Component mounted, JS is working')
+  }, [])
+
+  // Clear credentials from URL immediately on mount (security)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
     const url = new URL(window.location.href)
-    if (url.searchParams.has('username') || url.searchParams.has('password')) {
+    const hasCredentials = url.searchParams.has('username') || url.searchParams.has('password')
+    if (hasCredentials) {
       url.searchParams.delete('username')
       url.searchParams.delete('password')
       window.history.replaceState({}, '', url.toString())
+      // Show error since credentials were exposed in URL
+      setError('Error de seguridad: las credenciales no deben enviarse por URL. Por favor intente de nuevo.')
     }
   }, [])
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    e.stopPropagation()
+  async function doLogin() {
+    if (!username.trim() || !password) {
+      setError('Por favor ingrese cédula y contraseña')
+      return
+    }
+
     setError(null)
     setLoading(true)
-    console.log('[LoginForm] Intentando login...')
+
     try {
+      console.log('[LoginForm] Intentando login...')
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username.trim(), password }),
       })
+
       console.log('[LoginForm] Response status:', res.status)
 
-      let data
+      let data: { ok?: boolean; detail?: string } = {}
       try {
         data = await res.json()
-      } catch (parseErr) {
-        console.error('[LoginForm] Error parsing response:', parseErr)
-        setError('Error al procesar la respuesta del servidor')
-        return
+      } catch {
+        // Ignore parse error, will handle below
       }
 
       console.log('[LoginForm] Response data:', data)
 
       if (!res.ok) {
-        setError(typeof data.detail === 'string' ? data.detail : 'Credenciales incorrectas')
+        setError(data.detail || 'Credenciales incorrectas')
         return
       }
 
       if (data.ok === true) {
         console.log('[LoginForm] Login exitoso, redirigiendo...')
-        // Usar window.location para forzar un full reload y que el middleware detecte la cookie
+        // Force full page reload to trigger middleware cookie check
         window.location.href = '/'
       } else {
-        console.error('[LoginForm] Respuesta inesperada:', data)
         setError('Respuesta inesperada del servidor')
       }
     } catch (err) {
@@ -69,6 +78,12 @@ export function LoginForm() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    void doLogin()
   }
 
   return (
@@ -83,7 +98,13 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form onSubmit={onSubmit} className="space-y-5" noValidate>
+          {/* Fallback for users without JavaScript */}
+          <noscript>
+            <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3 text-sm text-destructive text-center">
+              JavaScript es requerido para iniciar sesión. Por favor habilite JavaScript en su navegador.
+            </div>
+          </noscript>
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
               Cédula
