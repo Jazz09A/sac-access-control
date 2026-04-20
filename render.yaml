@@ -1,0 +1,28 @@
+# Render.com configuration
+services:
+  - type: web
+    name: sac-administrative-frontend
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_BACKEND_URL
+        sync: false  # Set in dashboard
+      - key: BACKEND_URL
+        sync: false  # Set in dashboard
+      - key: AUTH_JWT_SECRET
+        sync: false  # Set in dashboard
+    healthCheckPath: /
+    # Ensure static files are served correctly
+    routes:
+      - type: rewrite
+        source: /_next/static/(.*)
+        destination: /_next/static/$1
+      - type: rewrite
+        source: /static/(.*)
+        destination: /static/$1
+      - type: rewrite
+        source: /(.*)
+        destination: /$1

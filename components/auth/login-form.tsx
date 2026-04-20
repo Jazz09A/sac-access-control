@@ -98,12 +98,27 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-5" noValidate>
-          {/* Fallback for users without JavaScript */}
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+        <form
+          onSubmit={onSubmit}
+          className="space-y-5"
+          noValidate
+          action="javascript:void(0)"
+          role="form"
+        >
+          {/* Fallback for users without JavaScript - prevents credential exposure */}
           <noscript>
             <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3 text-sm text-destructive text-center">
-              JavaScript es requerido para iniciar sesión. Por favor habilite JavaScript en su navegador.
+              <strong>Error:</strong> JavaScript es requerido para iniciar sesión de forma segura.
+              Sin JavaScript, las credenciales podrían exponerse en la URL.
+              Por favor habilite JavaScript o contacte al administrador.
             </div>
+            {/* Disable the form when JS is not available */}
+            <style>{`
+              form[role="form"] button[type="submit"] {
+                display: none !important;
+              }
+            `}</style>
           </noscript>
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
