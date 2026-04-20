@@ -44,9 +44,23 @@ export async function POST(request: Request) {
   const backendRaw = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
   const backend = normalizeBackendOrigin(backendRaw)
   console.log('[API Login] BACKEND_URL:', backendRaw)
+
   let body: { username?: string; password?: string }
+  const contentType = request.headers.get('content-type') || ''
+
   try {
-    body = await request.json()
+    if (contentType.includes('application/json')) {
+      body = await request.json()
+    } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+      const formData = await request.formData()
+      body = {
+        username: formData.get('username')?.toString(),
+        password: formData.get('password')?.toString()
+      }
+    } else {
+      // Try JSON as default
+      body = await request.json()
+    }
     console.log('[API Login] Body recibido:', { username: body.username })
   } catch {
     return NextResponse.json({ detail: 'Cuerpo inválido' }, { status: 400 })

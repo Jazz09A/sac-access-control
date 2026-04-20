@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Lock, ShieldCheck, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,16 @@ export function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Clear credentials from URL if present (security: prevent sharing links with passwords)
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (url.searchParams.has('username') || url.searchParams.has('password')) {
+      url.searchParams.delete('username')
+      url.searchParams.delete('password')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [])
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -56,7 +66,7 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-5">
+        <form onSubmit={onSubmit} method="POST" action="/api/auth/login" className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">
               Cédula

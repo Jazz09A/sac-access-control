@@ -87,8 +87,17 @@ export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): P
   // Add photo file
   formData.append('photo', data.photo)
 
+  // Get base URL with fallback for backward compatibility
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+    || process.env.NEXT_PUBLIC_API_BASE_URL
+    || ''
+
+  if (!baseUrl) {
+    throw new Error('Falta configurar NEXT_PUBLIC_BACKEND_URL en .env.local o .env')
+  }
+
   // Send request without Content-Type header (browser sets it with boundary)
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/+$/, '')}/api/v1/visits/`, {
+  const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/v1/visits/`, {
     method: 'POST',
     body: formData,
     cache: 'no-store'
