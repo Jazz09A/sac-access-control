@@ -21,6 +21,7 @@ interface EntryFormProps {
 export function EntryForm({ onSuccess }: EntryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoKey, setPhotoKey] = useState(0)
   const nowInVenezuela = getVenezuelaDateTimeInput()
 
   const {
@@ -169,6 +170,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
       photoUrl: ''
     })
     setPhotoFile(null)
+    setPhotoKey((prev) => prev + 1)
   }
 
   const onSubmit = async (data: EntryInput) => {
@@ -227,6 +229,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
       {/* Photo Upload Section */}
       <div className="space-y-6">
         <PhotoUpload
+          key={photoKey}
           onPhotoSelect={handlePhotoSelect}
           onFileSelect={handleFileSelect}
           label="Foto del Contribuyente"

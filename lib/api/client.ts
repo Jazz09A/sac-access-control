@@ -19,7 +19,7 @@ const getApiBaseUrl = () => {
       500
     )
   }
-
+  console.log('baseUrl', baseUrl)
   return baseUrl.replace(/\/+$/, '')
 }
 
