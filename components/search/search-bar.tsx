@@ -136,18 +136,18 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
         {showFilters && (
           <div className="pt-6 border-t border-border/50 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
             {/* Department Filter */}
-            <div className="space-y-2">
-              <Label htmlFor="departamento" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
-                Departamento
-              </Label>
-              <Input
-                id="departamento"
-                placeholder="ej: Fiscalizacion"
-                value={departamento}
-                onChange={(e) => setDepartamento(e.target.value)}
-                className="h-10 bg-muted/20 border-transparent"
-              />
-            </div>
+              {/* <div className="space-y-2">
+                <Label htmlFor="departamento" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                  Departamento
+                </Label>
+                <Input
+                  id="departamento"
+                  placeholder="ej: Fiscalizacion"
+                  value={departamento}
+                  onChange={(e) => setDepartamento(e.target.value)}
+                  className="h-10 bg-muted/20 border-transparent"
+                />
+              </div> */}
 
             {/* Status Filter */}
             <div className="space-y-2">

@@ -1,6 +1,7 @@
 'use client'
 
-import { UseFormRegister, FormState, FieldValues, Path, Control, Controller } from 'react-hook-form'
+import { useState, useEffect, useCallback } from 'react'
+import { UseFormRegister, FormState, FieldValues, Path, Control, Controller, useWatch } from 'react-hook-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,18 +12,20 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
-import { CONTRIBUTOR_TYPE_OPTIONS } from '@/utils/constants'
+import { CONTRIBUTOR_TYPE_OPTIONS, RIF_PREFIX_OPTIONS } from '@/utils/constants'
 
 interface ContributorFormProps<T extends FieldValues> {
   register: UseFormRegister<T>
   control: Control<T>
   formState: FormState<T>
+  setValue?: any
 }
 
 export function ContributorForm<T extends FieldValues>({
   register,
   control,
-  formState: { errors }
+  formState: { errors },
+  setValue
 }: ContributorFormProps<T>) {
   const getFieldError = (fieldName: string): string | undefined => {
     const keys = fieldName.split('.')
@@ -32,6 +35,39 @@ export function ContributorForm<T extends FieldValues>({
     }
     return error?.message as string | undefined
   }
+
+  // Watch the RIF value from the form
+  const rifValue = useWatch({ control, name: 'contributor.rif' as Path<T> })
+
+  // Local state for RIF prefix and number
+  const [rifPrefix, setRifPrefix] = useState<string>('J')
+  const [rifNumber, setRifNumber] = useState<string>('')
+
+  // Sync local state with form value when it changes externally (e.g., on reset)
+  useEffect(() => {
+    if (!rifValue) {
+      setRifPrefix('J')
+      setRifNumber('')
+    } else if (typeof rifValue === 'string') {
+      const parts = rifValue.split('-')
+      if (parts.length === 2) {
+        setRifPrefix(parts[0] || 'J')
+        setRifNumber(parts[1] || '')
+      }
+    }
+  }, [rifValue])
+
+  // Combine prefix and number into full RIF
+  useEffect(() => {
+    if (setValue) {
+      const cleanNumber = rifNumber.replace(/[^0-9]/g, '').slice(0, 9)
+      const fullRif = cleanNumber ? `${rifPrefix}-${cleanNumber}` : ''
+      const currentValue = rifValue || ''
+      if (fullRif !== currentValue) {
+        setValue('contributor.rif', fullRif, { shouldValidate: true })
+      }
+    }
+  }, [rifPrefix, rifNumber, setValue, rifValue])
 
   return (
     <Card className="border-border/70 bg-card">
@@ -56,18 +92,42 @@ export function ContributorForm<T extends FieldValues>({
             <Label htmlFor="rif" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               RIF <span className="text-destructive">*</span>
             </Label>
-            <Input
-              id="rif"
-              placeholder="ej: J-98765432"
-              aria-invalid={Boolean(getFieldError('contributor.rif'))}
-              {...register('contributor.rif' as Path<T>)}
-              className="bg-background"
-            />
+            <div className="flex gap-2">
+              <Select
+                value={rifPrefix}
+                onValueChange={setRifPrefix}
+              >
+                <SelectTrigger className="w-[100px] bg-background">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RIF_PREFIX_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                id="rif"
+                placeholder="98765432"
+                value={rifNumber}
+                onChange={(e) => {
+                  const cleanValue = e.target.value.replace(/[^0-9]/g, '').slice(0, 9)
+                  setRifNumber(cleanValue)
+                }}
+                className="flex-1 bg-background"
+                aria-invalid={Boolean(getFieldError('contributor.rif'))}
+              />
+            </div>
             {getFieldError('contributor.rif') && (
               <p className="text-xs text-destructive">
                 {getFieldError('contributor.rif')}
               </p>
             )}
+            <p className="text-[11px] text-muted-foreground">
+              {rifPrefix}-{rifNumber || '________'}
+            </p>
           </div>
 
           <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">

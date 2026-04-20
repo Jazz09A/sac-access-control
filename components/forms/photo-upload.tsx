@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 
 interface PhotoUploadProps {
   onPhotoSelect: (photoUrl: string) => void
+  onFileSelect?: (file: File | null) => void
   value?: string
   label?: string
   required?: boolean
@@ -31,6 +32,7 @@ const VDO_NINJA_ROOM_URL =
 
 export function PhotoUpload({
   onPhotoSelect,
+  onFileSelect,
   value,
   label = 'Foto del Contribuyente',
   required = false
@@ -66,6 +68,11 @@ export function PhotoUpload({
     if (file.size > 5 * 1024 * 1024) {
       toast.error('La imagen no debe exceder 5MB')
       return
+    }
+
+    // Store file for upload
+    if (onFileSelect) {
+      onFileSelect(file)
     }
 
     // Create preview
@@ -263,6 +270,23 @@ export function PhotoUpload({
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height)
     const url = canvas.toDataURL('image/jpeg', 0.92)
+
+    // Convert data URL to File for upload
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          const file = new File([blob], `camera-capture-${Date.now()}.jpg`, {
+            type: 'image/jpeg'
+          })
+          if (onFileSelect) {
+            onFileSelect(file)
+          }
+        }
+      },
+      'image/jpeg',
+      0.92
+    )
+
     setPreviewUrl(url)
     onPhotoSelect(url)
     stopCamera()
@@ -272,6 +296,9 @@ export function PhotoUpload({
   const clearPhoto = () => {
     setPreviewUrl(undefined)
     onPhotoSelect('')
+    if (onFileSelect) {
+      onFileSelect(null)
+    }
     stopCamera()
     if (fileInputRef.current) {
       fileInputRef.current.value = ''

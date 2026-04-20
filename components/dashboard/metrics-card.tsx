@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -11,6 +12,7 @@ interface MetricsCardProps {
     value: number
     label: string
   }
+  isLoading?: boolean
 }
 
 export function MetricsCard({
@@ -18,7 +20,8 @@ export function MetricsCard({
   value,
   icon: Icon,
   description,
-  trend
+  trend,
+  isLoading = false
 }: MetricsCardProps) {
   return (
     <Card className="gap-3 bg-white/[0.03] py-4">
@@ -31,7 +34,11 @@ export function MetricsCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="text-3xl font-semibold tracking-[-0.03em] text-foreground xl:text-[2rem]">{value}</div>
+        {isLoading ? (
+          <Skeleton className="h-8 w-16" />
+        ) : (
+          <div className="text-3xl font-semibold tracking-[-0.03em] text-foreground xl:text-[2rem]">{value}</div>
+        )}
         {description && (
           <p className="text-xs leading-5 text-muted-foreground">{description}</p>
         )}

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Visit, VisitStatus } from '@/types'
-import { formatDateTime, formatDuration } from '@/utils/formatters'
+import { formatDuration } from '@/utils/formatters'
 import { Clock, User, Briefcase, MapPin, FileText } from 'lucide-react'
 
 interface VisitDetailCardProps {
@@ -10,26 +10,21 @@ interface VisitDetailCardProps {
 
 export function VisitDetailCard({ visit }: VisitDetailCardProps) {
   const statusLabel: Record<VisitStatus, string> = {
-    [VisitStatus.ACTIVE]: 'Activa',
-    [VisitStatus.CLOSED]: 'Cerrada',
-    [VisitStatus.PENDING]: 'Pendiente',
     [VisitStatus.WAITING]: 'En Espera',
-    [VisitStatus.FINISHED]: 'Finalizado',
     [VisitStatus.ATTENDED]: 'Atendida',
-    [VisitStatus.REJECTED]: 'Rechazada',
-    [VisitStatus.RESCHEDULED]: 'Reprogramada'
+    [VisitStatus.FINISHED]: 'Finalizado'
   }
 
   const statusClassName: Record<VisitStatus, string> = {
-    [VisitStatus.ACTIVE]: 'border-sky-200 bg-sky-50 text-sky-700',
-    [VisitStatus.CLOSED]: 'border-border bg-muted text-foreground/80',
-    [VisitStatus.PENDING]: 'border-amber-200 bg-amber-50 text-amber-700',
-    [VisitStatus.WAITING]: 'border-blue-200 bg-blue-50 text-blue-700',
-    [VisitStatus.FINISHED]: 'border-green-200 bg-green-50 text-green-700',
+    [VisitStatus.WAITING]: 'border-yellow-200 bg-yellow-50 text-yellow-700',
     [VisitStatus.ATTENDED]: 'border-emerald-200 bg-emerald-50 text-emerald-700',
-    [VisitStatus.REJECTED]: 'border-red-200 bg-red-50 text-red-700',
-    [VisitStatus.RESCHEDULED]: 'border-purple-200 bg-purple-50 text-purple-700'
+    [VisitStatus.FINISHED]: 'border-green-200 bg-green-50 text-green-700'
   }
+
+  const entryDateTimeStr = `${visit.entry_date}T${visit.entry_time}`
+  const exitDateTimeStr = visit.exit_date && visit.exit_time
+    ? `${visit.exit_date}T${visit.exit_time}`
+    : null
 
   return (
     <Card className="border-border/70 bg-card">
@@ -42,7 +37,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
             <div>
               <CardTitle className="text-xl font-medium tracking-tight">{visit.reason}</CardTitle>
               <CardDescription className="mt-1 text-sm">
-                Registro administrativo asociado a {visit.contributor.name}
+                Registro administrativo asociado a {visit.contributor_name}
               </CardDescription>
             </div>
           </div>
@@ -57,7 +52,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Contribuyente
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {visit.contributor.name}
+              {visit.contributor_name}
             </p>
           </div>
           <div className="rounded-[18px] border border-border/60 bg-muted/20 p-4">
@@ -65,7 +60,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Entrada
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {formatDateTime(visit.entryDateTime)}
+              {entryDateTimeStr}
             </p>
           </div>
           <div className="rounded-[18px] border border-border/60 bg-muted/20 p-4">
@@ -73,48 +68,13 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Fiscal responsable
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {visit.officer}
+              {visit.fiscal_name || visit.received_by}
             </p>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="space-y-3 rounded-[18px] border border-border/60 bg-muted/20 p-4">
-          <h4 className="flex items-center gap-2 text-sm font-medium text-foreground">
-            <span className="flex size-8 items-center justify-center rounded-full bg-background text-muted-foreground">
-              <Briefcase className="size-4" />
-            </span>
-            Informacion del contribuyente
-          </h4>
-          <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-            <div>
-              <p className="text-muted-foreground">RIF</p>
-              <p className="font-medium">{visit.contributor.rif}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Tipo</p>
-              <p className="font-medium capitalize">
-                {visit.contributor.type.replace('_', ' ')}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Ocupación</p>
-              <p className="font-medium">{visit.contributor.occupation}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Teléfono</p>
-              <p className="font-medium">{visit.contributor.phone}</p>
-            </div>
-            {visit.contributor.email && (
-              <div className="col-span-2">
-                <p className="text-muted-foreground">Email</p>
-                <p className="font-medium text-sm break-all">{visit.contributor.email}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="space-y-3 rounded-[18px] border border-border/60 bg-muted/20 p-4">
           <h4 className="flex items-center gap-2 text-sm font-medium text-foreground">
             <span className="flex size-8 items-center justify-center rounded-full bg-background text-muted-foreground">
@@ -125,19 +85,19 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
           <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <div className="rounded-[16px] border border-border/50 bg-background p-4">
               <p className="text-muted-foreground">Entrada</p>
-              <p className="font-medium">{formatDateTime(visit.entryDateTime)}</p>
+              <p className="font-medium">{entryDateTimeStr}</p>
             </div>
-            {visit.exitDateTime && (
+            {exitDateTimeStr && (
               <div className="rounded-[16px] border border-border/50 bg-background p-4">
                 <p className="text-muted-foreground">Salida</p>
-                <p className="font-medium">{formatDateTime(visit.exitDateTime)}</p>
+                <p className="font-medium">{exitDateTimeStr}</p>
               </div>
             )}
-            {visit.exitDateTime && (
+            {exitDateTimeStr && (
               <div className="rounded-[16px] border border-border/50 bg-background p-4 md:col-span-2">
                 <p className="text-muted-foreground">Duración</p>
                 <p className="font-medium">
-                  {formatDuration(visit.entryDateTime, visit.exitDateTime)}
+                  {formatDuration(entryDateTimeStr, exitDateTimeStr)}
                 </p>
               </div>
             )}
@@ -163,15 +123,22 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               <User className="mt-1 h-4 w-4 flex-shrink-0 text-muted-foreground" />
               <div>
                 <p className="text-muted-foreground">Fiscal Responsable</p>
-                <p className="font-medium">{visit.officer}</p>
+                <p className="font-medium">{visit.fiscal_name || visit.received_by}</p>
               </div>
             </div>
-            {visit.fileNumber && (
+            <div className="flex items-start gap-3">
+              <User className="mt-1 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+              <div>
+                <p className="text-muted-foreground">Persona Responsable</p>
+                <p className="font-medium">{visit.responsible_person}</p>
+              </div>
+            </div>
+            {visit.file_number && (
               <div className="flex items-start gap-3">
                 <FileText className="w-4 h-4 mt-1 text-muted-foreground flex-shrink-0" />
                 <div>
                   <p className="text-muted-foreground">Número de Expediente</p>
-                  <p className="font-medium">{visit.fileNumber}</p>
+                  <p className="font-medium">{visit.file_number}</p>
                 </div>
               </div>
             )}

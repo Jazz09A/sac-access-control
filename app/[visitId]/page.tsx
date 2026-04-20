@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { VisitDetailCard } from '@/components/visits/visit-detail-card'
 import { VisitPhoto } from '@/components/visits/visit-photo'
 import { mockVisits } from '@/services/mock-data'
-import { Visit } from '@/types'
+import { Visit, VisitStatus } from '@/types'
 import { toast } from 'sonner'
 
 export default function VisitDetailPage() {
@@ -67,7 +67,7 @@ export default function VisitDetailPage() {
             </Button>
           </Link>
           
-          {visit.status === 'activa' && (
+          {(visit.status === VisitStatus.WAITING || visit.status === VisitStatus.ATTENDED) && (
             <Button
               onClick={handleRegisterExit}
               disabled={isExiting}
@@ -99,8 +99,8 @@ export default function VisitDetailPage() {
           {/* Sidebar - 1 column on desktop */}
           <div className="space-y-6">
             <VisitPhoto
-              photoUrl={visit.photoUrl}
-              contributorName={visit.contributor.name}
+              photoUrl={visit.signature_image_url || undefined}
+              contributorName={visit.contributor_name}
             />
           </div>
         </div>

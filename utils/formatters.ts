@@ -75,17 +75,44 @@ export function formatTimeAgoLocale(date: Date | string, locale: AppLocale): str
 export const formatDuration = (startDate: Date | string, endDate: Date | string): string => {
   const start = typeof startDate === 'string' ? new Date(startDate) : startDate
   const end = typeof endDate === 'string' ? new Date(endDate) : endDate
-  
+
   const diffMs = end.getTime() - start.getTime()
   const diffMins = Math.floor(diffMs / 60000)
-  
+
   if (diffMins < 60) {
     return `${diffMins} min`
   }
-  
+
   const hours = Math.floor(diffMins / 60)
   const minutes = diffMins % 60
   return `${hours}h ${minutes}m`
+}
+
+/** Format duration from date and time strings (e.g., "2026-04-17" and "10:35:00") */
+export const formatDurationFromStrings = (
+  startDateStr: string,
+  startTimeStr: string,
+  endDateStr?: string,
+  endTimeStr?: string
+): string => {
+  const start = new Date(`${startDateStr}T${startTimeStr}`)
+
+  if (!endDateStr || !endTimeStr) {
+    return '-'
+  }
+
+  const end = new Date(`${endDateStr}T${endTimeStr}`)
+  return formatDuration(start, end)
+}
+
+/** Format relative time from date and time strings */
+export function formatTimeAgoLocaleFromStrings(
+  dateStr: string,
+  timeStr: string,
+  locale: AppLocale
+): string {
+  const dateTime = new Date(`${dateStr}T${timeStr}`)
+  return formatTimeAgoLocale(dateTime, locale)
 }
 
 export const formatRIF = (rif: string): string => {
@@ -104,10 +131,60 @@ export const formatPhone = (phone: string): string => {
   // Format phone as (0212) 123-4567
   const cleaned = phone.replace(/[^0-9]/g, '')
   if (cleaned.length < 10) return cleaned
-  
+
   const area = cleaned.slice(0, 4)
   const prefix = cleaned.slice(4, 7)
   const line = cleaned.slice(7, 11)
-  
+
   return `(${area}) ${prefix}-${line}`
+}
+
+/**
+ * Get current date in Venezuela timezone formatted as YYYY-MM-DD
+ */
+export const getVenezuelaDate = (): string => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: VENEZUELA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date())
+}
+
+/**
+ * Get current time in Venezuela timezone formatted as HH:MM:SS
+ */
+export const getVenezuelaTimeString = (): string => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: VENEZUELA_TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).format(new Date())
+}
+
+/**
+ * Format a Date object as YYYY-MM-DD for API
+ */
+export const formatDateForAPI = (date: Date): string => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: VENEZUELA_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(date)
+}
+
+/**
+ * Format a Date object as HH:MM:SS for API
+ */
+export const formatTimeForAPI = (date: Date): string => {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: VENEZUELA_TIMEZONE,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).format(date)
 }

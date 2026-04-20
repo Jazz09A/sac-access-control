@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { UseFormRegister, FormState, Controller, Control, FieldValues, Path } from 'react-hook-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -12,20 +13,26 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select'
+import { FiscalSelector } from '@/components/fiscals/fiscal-selector'
 import { DEPARTMENTS, VISIT_REASONS } from '@/utils/constants'
 import { buildVenezuelaDateTime, getVenezuelaDateTimeInput } from '@/utils/formatters'
+import { Fiscal } from '@/types'
 
 interface VisitFormProps<T extends FieldValues> {
   register: UseFormRegister<T>
   control: Control<T>
   formState: FormState<T>
+  setValue?: any
 }
 
 export function VisitForm<T extends FieldValues>({
   register,
   control,
-  formState: { errors }
+  formState: { errors },
+  setValue
 }: VisitFormProps<T>) {
+  const [selectedFiscal, setSelectedFiscal] = useState<Fiscal | null>(null)
+
   const getFieldError = (fieldName: string): string | undefined => {
     const keys = fieldName.split('.')
     let error: any = errors
@@ -33,6 +40,13 @@ export function VisitForm<T extends FieldValues>({
       error = error?.[key]
     }
     return error?.message as string | undefined
+  }
+
+  const handleFiscalSelect = (fiscal: Fiscal) => {
+    setSelectedFiscal(fiscal)
+    if (setValue) {
+      setValue('visit.fiscalId', fiscal.id, { shouldValidate: true })
+    }
   }
 
   return (
@@ -157,75 +171,36 @@ export function VisitForm<T extends FieldValues>({
               </p>
             )}
           </div>
-
-          {/* <div className="space-y-2 rounded-[18px] border border-border/60 bg-muted/20 p-4">
-            <Label htmlFor="department" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-              Departamento <span className="text-destructive">*</span>
-            </Label>
-            <Controller
-              name={'visit.department' as Path<T>}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value ? String(field.value) : ''}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger
-                    id="department"
-                    aria-invalid={Boolean(getFieldError('visit.department'))}
-                    className="w-full bg-background"
-                  >
-                    <SelectValue placeholder="Seleccionar departamento" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DEPARTMENTS.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {getFieldError('visit.department') && (
-              <p className="text-xs text-destructive">
-                {getFieldError('visit.department')}
-              </p>
-            )}
-          </div>*/}
-        </div> 
+        </div>
 
         <div className="space-y-4 rounded-[18px] border border-border/60 bg-muted/20 p-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-[1.4fr_1fr]">
             <div className="space-y-2">
-              <Label htmlFor="officer" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              <Label htmlFor="fiscalId" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
                 Fiscal responsable <span className="text-destructive">*</span>
               </Label>
-              <Input
-                id="officer"
-                placeholder="ej: Carlos Mendez"
-                aria-invalid={Boolean(getFieldError('visit.officer'))}
-                {...register('visit.officer' as Path<T>)}
-                className="bg-background"
+              <Controller
+                name={'visit.fiscalId' as Path<T>}
+                control={control}
+                render={({ field }) => (
+                  <FiscalSelector
+                    value={field.value}
+                    onSelect={handleFiscalSelect}
+                    placeholder="Buscar y seleccionar fiscal..."
+                  />
+                )}
               />
-              {getFieldError('visit.officer') && (
+              {getFieldError('visit.fiscalId') && (
                 <p className="text-xs text-destructive">
-                  {getFieldError('visit.officer')}
+                  {getFieldError('visit.fiscalId')}
+                </p>
+              )}
+              {selectedFiscal && (
+                <p className="text-xs text-muted-foreground">
+                  Seleccionado: {selectedFiscal.name} (ID: {selectedFiscal.id})
                 </p>
               )}
             </div>
-
-            {/* <div className="space-y-2">
-              <Label htmlFor="fileNumber" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                Numero de expediente
-              </Label>
-              <Input
-                id="fileNumber"
-                placeholder="ej: EXP-2024-001"
-                {...register('visit.fileNumber' as Path<T>)}
-                className="bg-background"
-              />
-            </div> */}
           </div>
 
           <div className="space-y-2">

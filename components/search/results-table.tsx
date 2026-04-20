@@ -31,14 +31,9 @@ export function ResultsTable({
   currentPage = 1
 }: ResultsTableProps) {
   const statusLabel: Record<VisitStatus, string> = {
-    [VisitStatus.ACTIVE]: 'Activa',
-    [VisitStatus.CLOSED]: 'Cerrada',
-    [VisitStatus.PENDING]: 'Pendiente',
     [VisitStatus.WAITING]: 'En Espera',
-    [VisitStatus.FINISHED]: 'Finalizado',
     [VisitStatus.ATTENDED]: 'Atendida',
-    [VisitStatus.REJECTED]: 'Rechazada',
-    [VisitStatus.RESCHEDULED]: 'Reprogramada'
+    [VisitStatus.FINISHED]: 'Finalizado'
   }
 
   if (isLoading) {

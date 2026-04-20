@@ -11,13 +11,8 @@ export enum ContributorType {
 
 export enum VisitStatus {
   WAITING = 'espera',
-  FINISHED = 'finalizado',
-  CLOSED = 'cerrada',
-  ACTIVE = 'activa',
-  PENDING = 'pendiente',
   ATTENDED = 'atendido',
-  REJECTED = 'rechazado',
-  RESCHEDULED = 'reprogramado'
+  FINISHED = 'finalizado'
 }
 
 export interface Contributor {
@@ -31,23 +26,33 @@ export interface Contributor {
   createdAt: Date
 }
 
+export interface VisitPhoto {
+  id: number
+  visit_id: string
+  photo_url: string
+  created_at: string
+}
+
 export interface Visit {
   id: string
   contributor_id: number
+  contributor_name: string
   fiscal_id: number
+  fiscal_name?: string
   reason: string
   observations?: string
   received_by: string
+  responsible_person: string
   department: string
   file_number?: string
   entry_date: string
   entry_time: string
-  signature_image_url?: string
-  fiscal_name?: string
   exit_date?: string
   exit_time?: string
+  signature_image_url?: string
   status: VisitStatus
   created_at: string
+  photos?: VisitPhoto[]
 }
 
 export interface VisitHistory {
@@ -80,4 +85,15 @@ export interface SearchFilters {
   fecha_hasta?: string
   skip?: number
   limit?: number
+}
+
+export interface Fiscal {
+  id: number
+  external_id: string
+  name: string
+  person_id: number
+  email: string
+  group_id: string
+  supervisor_id: string
+  status: boolean
 }

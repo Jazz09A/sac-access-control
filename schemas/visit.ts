@@ -19,13 +19,17 @@ export const visitSchema = z.object({
     .max(500, 'Observaciones no pueden exceder 500 caracteres')
     .optional()
     .or(z.literal('')),
-  officer: z
-    .string()
-    .min(1, 'Fiscal responsable es requerido')
-    .max(100, 'Nombre del fiscal responsable no puede exceder 100 caracteres'),
+  fiscalId: z
+    .number({
+      required_error: 'Fiscal responsable es requerido',
+      invalid_type_error: 'Fiscal responsable debe ser seleccionado de la lista'
+    })
+    .int('ID de fiscal debe ser un número entero')
+    .positive('ID de fiscal debe ser positivo'),
   department: z
     .string()
-    .min(1, 'Departamento es requerido'),
+    .optional()
+    .default('Fiscalización'),
   fileNumber: z
     .string()
     .max(50, 'Número de expediente no puede exceder 50 caracteres')
