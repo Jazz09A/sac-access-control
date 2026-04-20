@@ -146,7 +146,10 @@ export function VisitForm<T extends FieldValues>({
               render={({ field }) => (
                 <Select
                   value={field.value ? String(field.value) : ''}
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    field.onBlur()
+                  }}
                 >
                   <SelectTrigger
                     id="reason"

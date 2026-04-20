@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Visit, VisitStatus } from '@/types'
-import { formatDuration } from '@/utils/formatters'
+import { formatDuration, formatDateTime } from '@/utils/formatters'
 import { Clock, User, Briefcase, MapPin, FileText } from 'lucide-react'
 
 interface VisitDetailCardProps {
@@ -25,6 +25,10 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
   const exitDateTimeStr = visit.exit_date && visit.exit_time
     ? `${visit.exit_date}T${visit.exit_time}`
     : null
+
+  // Formatted date for display
+  const formattedEntryDate = formatDateTime(entryDateTimeStr)
+  const formattedExitDate = exitDateTimeStr ? formatDateTime(exitDateTimeStr) : null
 
   return (
     <Card className="border-border/70 bg-card">
@@ -52,7 +56,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Contribuyente
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {visit.contributor_name}
+              {visit.contributor_name || visit.received_by || 'No especificado'}
             </p>
           </div>
           <div className="rounded-[18px] border border-border/60 bg-muted/20 p-4">
@@ -60,7 +64,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Entrada
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {entryDateTimeStr}
+              {formattedEntryDate}
             </p>
           </div>
           <div className="rounded-[18px] border border-border/60 bg-muted/20 p-4">
@@ -68,7 +72,7 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
               Fiscal responsable
             </p>
             <p className="mt-2 font-medium text-foreground">
-              {visit.fiscal_name || visit.received_by}
+              {visit.fiscal_name || visit.received_by || 'No asignado'}
             </p>
           </div>
         </div>
@@ -85,12 +89,12 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
           <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <div className="rounded-[16px] border border-border/50 bg-background p-4">
               <p className="text-muted-foreground">Entrada</p>
-              <p className="font-medium">{entryDateTimeStr}</p>
+              <p className="font-medium">{formattedEntryDate}</p>
             </div>
-            {exitDateTimeStr && (
+            {formattedExitDate && (
               <div className="rounded-[16px] border border-border/50 bg-background p-4">
                 <p className="text-muted-foreground">Salida</p>
-                <p className="font-medium">{exitDateTimeStr}</p>
+                <p className="font-medium">{formattedExitDate}</p>
               </div>
             )}
             {exitDateTimeStr && (

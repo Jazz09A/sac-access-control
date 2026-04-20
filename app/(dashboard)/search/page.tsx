@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { SearchBar } from '@/components/search/search-bar'
 import { ResultsTable } from '@/components/search/results-table'
-import { SearchFilters, VisitHistory } from '@/types'
-import { getVisitsHistory } from '@/services/visits'
+import { SearchFilters, VisitHistory, VisitStatus } from '@/types'
+import { getVisitsHistory, markVisitAsAttended, registerVisitExit } from '@/services/visits'
+import { toast } from 'sonner'
 
 export default function SearchPage() {
   const [visitHistory, setVisitHistory] = useState<VisitHistory[]>([])
@@ -27,6 +28,42 @@ export default function SearchPage() {
     }
   }
 
+  const handleMarkAsAttended = async (visitId: string) => {
+    try {
+      await markVisitAsAttended(visitId)
+      toast.success('Visita marcada como atendida')
+      // Refresh the search results
+      setVisitHistory(prev => prev.map(visit => 
+        visit.id === visitId 
+          ? { ...visit, estado: VisitStatus.ATTENDED }
+          : visit
+      ))
+    } catch (error) {
+      console.error('Error marking as attended:', error)
+      toast.error('Error al marcar como atendido')
+    }
+  }
+
+  const handleRegisterExit = async (visitId: string) => {
+    try {
+      const now = new Date()
+      const exitDate = now.toISOString().split('T')[0]
+      const exitTime = now.toTimeString().slice(0, 8)
+
+      await registerVisitExit(visitId, {
+        exit_date: exitDate,
+        exit_time: exitTime,
+        status: VisitStatus.FINISHED
+      })
+      toast.success('Salida registrada correctamente')
+      // Refresh the search results
+      setVisitHistory(prev => prev.filter(visit => visit.id !== visitId))
+    } catch (error) {
+      console.error('Error registering exit:', error)
+      toast.error('Error al registrar la salida')
+    }
+  }
+
   return (
     <div className="p-10 max-w-7xl mx-auto space-y-12">
       <div className="space-y-4">
@@ -42,6 +79,8 @@ export default function SearchPage() {
         visits={visitHistory}
         isLoading={isLoading}
         totalCount={totalCount}
+        onMarkAsAttended={handleMarkAsAttended}
+        onRegisterExit={handleRegisterExit}
       />
     </div>
   )

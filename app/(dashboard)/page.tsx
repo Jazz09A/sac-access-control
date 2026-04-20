@@ -15,7 +15,7 @@ import { toast } from 'sonner'
 // Transform UltimaActividad from API to Visit format for RecentVisits component
 function transformActividadToVisit(actividad: UltimaActividad, date: string): Visit {
   return {
-    id: `${actividad.rif}-${actividad.entry_time}`, // Generate unique id from rif + time
+    id: actividad.id, // Real visit UUID from API
     contributor_id: 0, // Not provided by dashboard API
     contributor_name: actividad.contribuyente,
     fiscal_id: 0, // Not provided by this endpoint

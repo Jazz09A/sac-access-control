@@ -180,6 +180,16 @@ export async function registerVisitExit(visitId: string, data: {
 }
 
 /**
+ * Mark visit as attended
+ * Changes status from 'espera' to 'atendido'
+ */
+export async function markVisitAsAttended(visitId: string): Promise<Visit> {
+  return apiRequest<Visit>(`/api/v1/visits/${visitId}/attend`, {
+    method: 'PATCH'
+  })
+}
+
+/**
  * Dashboard metrics response from API
  */
 export interface EntradasDia {
@@ -195,6 +205,7 @@ export interface PersonasDentro {
 }
 
 export interface UltimaActividad {
+  id: string
   motivo: string
   contribuyente: string
   rif: string

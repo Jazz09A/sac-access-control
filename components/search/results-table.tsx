@@ -1,6 +1,7 @@
 'use client'
 
-import { Eye } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Eye, MoreHorizontal, CheckCircle, LogOut } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -12,6 +13,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { VisitHistory, VisitStatus } from '@/types'
 import { formatDateTime } from '@/utils/formatters'
 import { STATUS_COLORS } from '@/utils/constants'
@@ -22,18 +29,28 @@ interface ResultsTableProps {
   totalCount?: number
   onPageChange?: (page: number) => void
   currentPage?: number
+  onMarkAsAttended?: (visitId: string) => void
+  onRegisterExit?: (visitId: string) => void
 }
 
 export function ResultsTable({
   visits,
   isLoading = false,
   totalCount = 0,
-  currentPage = 1
+  currentPage = 1,
+  onMarkAsAttended,
+  onRegisterExit
 }: ResultsTableProps) {
+  const router = useRouter()
+
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.WAITING]: 'En Espera',
     [VisitStatus.ATTENDED]: 'Atendida',
     [VisitStatus.FINISHED]: 'Finalizado'
+  }
+
+  const handleViewDetails = (visitId: string) => {
+    router.push(`/${visitId}`)
   }
 
   if (isLoading) {
@@ -70,11 +87,12 @@ export function ResultsTable({
               <TableHead className="hidden lg:table-cell font-mono text-[10px] uppercase tracking-wider">Depto.</TableHead>
               <TableHead className="hidden sm:table-cell font-mono text-[10px] uppercase tracking-wider">Motivo</TableHead>
               <TableHead className="w-24 font-mono text-[10px] uppercase tracking-wider">Estado</TableHead>
+              <TableHead className="w-24 font-mono text-[10px] uppercase tracking-wider text-right px-6">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {visits.map((visit, index) => (
-              <TableRow key={`${visit.rif}-${index}`} className="hover:bg-primary/[0.02] transition-colors">
+              <TableRow key={visit.id} className="hover:bg-primary/[0.02] transition-colors">
                 <TableCell className="font-mono text-xs font-semibold px-6">
                   {visit.rif}
                 </TableCell>
@@ -96,6 +114,35 @@ export function ResultsTable({
                   <Badge variant={visit.estado === VisitStatus.WAITING ? 'outline' : 'default'}>
                     {statusLabel[visit.estado]}
                   </Badge>
+                </TableCell>
+                <TableCell className="text-right px-6">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleViewDetails(visit.id)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        Ver detalles
+                      </DropdownMenuItem>
+                      
+                      {visit.estado === VisitStatus.WAITING && onMarkAsAttended && (
+                        <DropdownMenuItem onClick={() => onMarkAsAttended(visit.id)}>
+                          <CheckCircle className="mr-2 h-4 w-4 text-blue-600" />
+                          Marcar como Atendido
+                        </DropdownMenuItem>
+                      )}
+                      
+                      {(visit.estado === VisitStatus.WAITING || visit.estado === VisitStatus.ATTENDED) && onRegisterExit && (
+                        <DropdownMenuItem onClick={() => onRegisterExit(visit.id)}>
+                          <LogOut className="mr-2 h-4 w-4 text-green-600" />
+                          Registrar Salida
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, CheckCircle, AlertCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -29,10 +29,11 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
     formState,
     handleSubmit,
     setValue,
-    reset
+    reset,
+    trigger
   } = useForm<EntryInput>({
     resolver: zodResolver(entrySchema),
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: {
       contributor: {
         rif: '',
@@ -54,6 +55,9 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
     }
   })
 
+  // Watch all field values to validate in real time
+  const watchedValues = useWatch({ control })
+
   const handlePhotoSelect = (photoUrl: string) => {
     setValue('photoUrl', photoUrl)
   }
@@ -65,59 +69,83 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
   // Get validation status for form
   const validationStatus = useMemo(() => {
     const errors = formState.errors
+    const values = watchedValues
+    const contributor = values?.contributor
+    const visit = values?.visit
 
-    // Define required fields and their labels
-    const requiredFields = [
-      { key: 'rif', section: 'contributor', label: 'RIF' },
-      { key: 'name', section: 'contributor', label: 'Nombre' },
-      { key: 'type', section: 'contributor', label: 'Tipo' },
-      { key: 'occupation', section: 'contributor', label: 'Ocupación' },
-      { key: 'phone', section: 'contributor', label: 'Teléfono' },
-      { key: 'entryDateTime', section: 'visit', label: 'Fecha y hora' },
-      { key: 'reason', section: 'visit', label: 'Motivo' },
-      { key: 'fiscalId', section: 'visit', label: 'Fiscal' },
-      // { key: 'department', section: 'visit', label: 'Departamento' },
-    ] as const
-
-    const missingFields: string[] = []
+    const incompleteFields: string[] = []
     const errorFields: string[] = []
 
-    // Check contributor fields
-    if (errors.contributor) {
-      if (errors.contributor.rif) errorFields.push('RIF')
-      if (errors.contributor.name) errorFields.push('Nombre')
-      if (errors.contributor.type) errorFields.push('Tipo')
-      if (errors.contributor.occupation) errorFields.push('Ocupación')
-      if (errors.contributor.phone) errorFields.push('Teléfono')
+    // Helper: a field is incomplete if empty/undefined AND no error (error takes priority)
+    const checkField = (hasError: boolean, isEmpty: boolean, label: string) => {
+      if (hasError) {
+        errorFields.push(label)
+      } else if (isEmpty) {
+        incompleteFields.push(label)
+      }
     }
 
-    // Check visit fields (department is auto-set to "Fiscalización")
-    if (errors.visit) {
-      if (errors.visit.entryDateTime) errorFields.push('Fecha y hora')
-      if (errors.visit.reason) errorFields.push('Motivo')
-      if (errors.visit.fiscalId) errorFields.push('Fiscal')
-    }
+    checkField(
+      Boolean(errors.contributor?.rif),
+      !contributor?.rif || contributor.rif.trim() === '' || !contributor.rif.includes('-'),
+      'RIF'
+    )
+    checkField(
+      Boolean(errors.contributor?.name),
+      !contributor?.name || contributor.name.trim() === '',
+      'Nombre'
+    )
+    checkField(
+      Boolean(errors.contributor?.type),
+      !contributor?.type,
+      'Tipo'
+    )
+    checkField(
+      Boolean(errors.contributor?.occupation),
+      !contributor?.occupation || contributor.occupation.trim() === '',
+      'Ocupación'
+    )
+    checkField(
+      Boolean(errors.contributor?.phone),
+      !contributor?.phone || contributor.phone.trim() === '',
+      'Teléfono'
+    )
+    checkField(
+      Boolean(errors.visit?.entryDateTime),
+      !visit?.entryDateTime,
+      'Fecha y hora'
+    )
+    checkField(
+      Boolean(errors.visit?.reason),
+      !visit?.reason || visit.reason.trim() === '',
+      'Motivo'
+    )
+    checkField(
+      Boolean(errors.visit?.fiscalId),
+      !visit?.fiscalId,
+      'Fiscal'
+    )
 
-    // Check photo
+    // Photo is always "incomplete" if not provided
     if (!photoFile) {
-      missingFields.push('Foto del contribuyente')
+      incompleteFields.push('Foto del contribuyente')
     }
 
-    // Calculate completion: 5 contributor + 3 visit (no department) + 1 photo = 9 fields
     const totalFields = 9
-    const validFields = totalFields - missingFields.length - errorFields.length
-    const isComplete = missingFields.length === 0 && errorFields.length === 0 && photoFile !== null
+    const invalidCount = incompleteFields.length + errorFields.length
+    const validFields = totalFields - invalidCount
+    const isComplete = invalidCount === 0 && photoFile !== null
 
     return {
       validFields,
       totalFields,
-      missingCount: missingFields.length,
+      missingCount: incompleteFields.length,
       errorCount: errorFields.length,
       isComplete,
-      missingFields,
+      missingFields: incompleteFields,
       errorFields
     }
-  }, [formState.errors, photoFile])
+  }, [formState.errors, watchedValues, photoFile])
 
   const resetForm = () => {
     const freshNow = getVenezuelaDateTimeInput()

@@ -67,7 +67,10 @@ export function ContributorForm<T extends FieldValues>({
         setValue('contributor.rif', fullRif, { shouldValidate: true })
       }
     }
-  }, [rifPrefix, rifNumber, setValue, rifValue])
+    // Note: rifValue is intentionally omitted from deps to prevent infinite loop
+    // setValue is stable from react-hook-form
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rifPrefix, rifNumber])
 
   return (
     <Card className="border-border/70 bg-card">
@@ -140,7 +143,10 @@ export function ContributorForm<T extends FieldValues>({
               render={({ field }) => (
                 <Select
                   value={field.value ? String(field.value) : ''}
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    field.onBlur()
+                  }}
                 >
                   <SelectTrigger
                     id="type"

@@ -56,9 +56,10 @@ export interface Visit {
 }
 
 export interface VisitHistory {
+  id: string
   rif: string
   contribuyente: string
-  registro?: string
+  registro?: string | null
   depto: string
   motivo: string
   estado: VisitStatus

@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Camera } from 'lucide-react'
 
@@ -38,11 +37,12 @@ export function VisitPhoto({ photoUrl, contributorName }: VisitPhotoProps) {
       </CardHeader>
       <CardContent>
         <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
-          <Image
+          {/* Usar img para URLs externas de Cloudflare R2 */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={photoUrl}
             alt={`Foto de ${contributorName}`}
-            fill
-            className="object-cover"
+            className="w-full h-full object-cover"
           />
         </div>
       </CardContent>
