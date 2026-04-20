@@ -58,7 +58,7 @@ export function ContributorForm<T extends FieldValues>({
             </Label>
             <Input
               id="rif"
-              placeholder="ej: V-12345678"
+              placeholder="ej: J-98765432"
               aria-invalid={Boolean(getFieldError('contributor.rif'))}
               {...register('contributor.rif' as Path<T>)}
               className="bg-background"

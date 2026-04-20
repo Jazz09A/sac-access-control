@@ -116,7 +116,7 @@ export default function DashboardPage() {
                   key={visit.id}
                   className="rounded-2xl border border-border bg-muted/40 p-4 dark:border-white/8 dark:bg-white/[0.03]"
                 >
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-foreground">
                         {visit.contributor.name}
@@ -125,7 +125,7 @@ export default function DashboardPage() {
                     </div>
                     <Badge
                       variant="outline"
-                      className="border-border bg-background text-[10px] uppercase tracking-[0.14em] text-muted-foreground dark:border-white/8 dark:bg-white/[0.03]"
+                      className="w-fit self-start border-border bg-background text-[10px] uppercase tracking-[0.14em] text-muted-foreground dark:border-white/8 dark:bg-white/[0.03] sm:self-auto"
                     >
                       {statusLabel(visit.status)}
                     </Badge>

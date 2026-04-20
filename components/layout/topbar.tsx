@@ -162,29 +162,30 @@ export function Topbar() {
                 </div>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
-                  className="cursor-pointer gap-2 rounded-xl py-2.5"
-                  onClick={() => router.push('/settings#perfil')}
+                  className="cursor-pointer gap-2 rounded-xl py-2.5 disabled:opacity-50" disabled={true}
+                  // onClick={() => router.push('/settings#perfil')}
                 >
                   <User className="h-4 w-4" />
                   {t('topbar.editProfile')}
+                  <span className="ml-auto text-[10px] text-muted-foreground">{t('topbar.soon')}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
+                {/* <DropdownMenuItem
                   className="cursor-pointer gap-2 rounded-xl py-2.5"
                   onClick={() => router.push('/settings#preferencias')}
                 >
                   <SlidersHorizontal className="h-4 w-4" />
                   {t('topbar.preferences')}
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem className="cursor-pointer gap-2 rounded-xl py-2.5" disabled>
                   <Bell className="h-4 w-4 opacity-50" />
                   {t('topbar.notifications')}
                   <span className="ml-auto text-[10px] text-muted-foreground">{t('topbar.soon')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="cursor-pointer gap-2 rounded-xl py-2.5">
+                  {/* <DropdownMenuSubTrigger className="cursor-pointer gap-2 rounded-xl py-2.5">
                     <Settings className="h-4 w-4" />
                     {t('topbar.moreSettings')}
-                  </DropdownMenuSubTrigger>
+                  </DropdownMenuSubTrigger> */}
                   <DropdownMenuSubContent className="rounded-xl border-white/10 bg-popover/95 p-2 backdrop-blur-xl">
                     <DropdownMenuItem
                       className="cursor-pointer gap-2 rounded-lg py-2"
@@ -203,14 +204,14 @@ export function Topbar() {
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="cursor-pointer gap-2 rounded-xl py-2.5">
+                  {/* <DropdownMenuSubTrigger className="cursor-pointer gap-2 rounded-xl py-2.5">
                     {mounted && theme === 'dark' ? (
                       <Moon className="h-4 w-4" />
                     ) : (
                       <Sun className="h-4 w-4" />
                     )}
                     {t('topbar.appearance')}
-                  </DropdownMenuSubTrigger>
+                  </DropdownMenuSubTrigger> */}
                   <DropdownMenuSubContent className="rounded-xl border-white/10 bg-popover/95 p-2 backdrop-blur-xl">
                     <DropdownMenuRadioGroup
                       value={mounted ? (theme ?? 'dark') : 'dark'}

@@ -12,13 +12,23 @@ export function VisitDetailCard({ visit }: VisitDetailCardProps) {
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.ACTIVE]: 'Activa',
     [VisitStatus.CLOSED]: 'Cerrada',
-    [VisitStatus.PENDING]: 'Pendiente'
+    [VisitStatus.PENDING]: 'Pendiente',
+    [VisitStatus.WAITING]: 'En Espera',
+    [VisitStatus.FINISHED]: 'Finalizado',
+    [VisitStatus.ATTENDED]: 'Atendida',
+    [VisitStatus.REJECTED]: 'Rechazada',
+    [VisitStatus.RESCHEDULED]: 'Reprogramada'
   }
 
   const statusClassName: Record<VisitStatus, string> = {
     [VisitStatus.ACTIVE]: 'border-sky-200 bg-sky-50 text-sky-700',
     [VisitStatus.CLOSED]: 'border-border bg-muted text-foreground/80',
-    [VisitStatus.PENDING]: 'border-amber-200 bg-amber-50 text-amber-700'
+    [VisitStatus.PENDING]: 'border-amber-200 bg-amber-50 text-amber-700',
+    [VisitStatus.WAITING]: 'border-blue-200 bg-blue-50 text-blue-700',
+    [VisitStatus.FINISHED]: 'border-green-200 bg-green-50 text-green-700',
+    [VisitStatus.ATTENDED]: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    [VisitStatus.REJECTED]: 'border-red-200 bg-red-50 text-red-700',
+    [VisitStatus.RESCHEDULED]: 'border-purple-200 bg-purple-50 text-purple-700'
   }
 
   return (

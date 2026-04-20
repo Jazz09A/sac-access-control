@@ -37,6 +37,9 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'dashboard.mini.pending': 'Pendientes',
 
     // Estados de visita
+    'dashboard.status.activa': 'Activa',
+    'dashboard.status.cerrada': 'Cerrada',
+    'dashboard.status.pendiente': 'Pendiente',
     'dashboard.status.espera': 'En espera',
     'dashboard.status.atendido': 'Atendida',
     'dashboard.status.finalizado': 'Finalizada',
@@ -171,6 +174,9 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'dashboard.mini.pending': 'Pending',
 
     // Visit status
+    'dashboard.status.activa': 'Active',
+    'dashboard.status.cerrada': 'Closed',
+    'dashboard.status.pendiente': 'Pending',
     'dashboard.status.espera': 'Waiting',
     'dashboard.status.atendido': 'Attended',
     'dashboard.status.finalizado': 'Finished',

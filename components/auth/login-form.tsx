@@ -52,7 +52,7 @@ export function LoginForm() {
         </div>
         <CardTitle className="font-display text-2xl tracking-tight">Ingreso al sistema</CardTitle>
         <CardDescription className="text-balance text-sm">
-          Control de ingresos — consola administrativa. Introduce tus credenciales.
+          Control de ingresos — Introduce tus credenciales.
         </CardDescription>
       </CardHeader>
       <CardContent>

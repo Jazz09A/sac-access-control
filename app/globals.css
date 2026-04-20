@@ -181,6 +181,18 @@ html.theme-animating *::after {
   }
 }
 
+@keyframes route-progress {
+  0% {
+    transform: translateX(-120%);
+  }
+  60% {
+    transform: translateX(140%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+
 .route-transition-enter {
   animation: route-fade-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform, filter;
@@ -190,4 +202,9 @@ html.theme-animating *::after {
   .route-transition-enter {
     animation: none !important;
   }
+}
+
+nextjs-portal {
+  top: 0 !important;
+  left: 0 !important;
 }

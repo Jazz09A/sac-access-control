@@ -19,7 +19,7 @@ const navConfig = [
   { href: '/', msgKey: 'nav.dashboard' as const, icon: LayoutDashboard },
   { href: '/entry', msgKey: 'nav.entry' as const, icon: LogIn },
   { href: '/search', msgKey: 'nav.search' as const, icon: Search },
-  { href: '/settings', msgKey: 'nav.settings' as const, icon: Settings },
+  // { href: '/settings', msgKey: 'nav.settings' as const, icon: Settings },
 ]
 
 export function Sidebar() {
@@ -104,7 +104,7 @@ export function MobileNav() {
 
   return (
     <div className="border-b border-white/8 px-4 py-3 lg:hidden">
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
         {navConfig.map((item) => {
           const isActive =
             item.href === '/'
@@ -113,11 +113,11 @@ export function MobileNav() {
           const Icon = item.icon
 
           return (
-            <Link key={item.href} href={item.href} className="shrink-0">
+            <Link key={item.href} href={item.href} className="w-full">
               <Button
                 variant="ghost"
                 className={cn(
-                  'h-10 rounded-xl px-3 text-sm',
+                  'h-10 w-full justify-start rounded-xl px-3 text-sm',
                   isActive
                     ? 'bg-primary text-primary-foreground hover:bg-primary/95'
                     : 'border border-white/8 bg-white/[0.03] text-muted-foreground hover:bg-white/[0.06] hover:text-foreground',

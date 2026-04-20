@@ -1,7 +1,6 @@
 'use client'
 
-import Link from 'next/link'
-import { Eye, ChevronRight } from 'lucide-react'
+import { Eye } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -13,12 +12,12 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table'
-import { Visit, VisitStatus } from '@/types'
-import { formatDateTime, formatTimeAgo } from '@/utils/formatters'
+import { VisitHistory, VisitStatus } from '@/types'
+import { formatDateTime } from '@/utils/formatters'
 import { STATUS_COLORS } from '@/utils/constants'
 
 interface ResultsTableProps {
-  visits: Visit[]
+  visits: VisitHistory[]
   isLoading?: boolean
   totalCount?: number
   onPageChange?: (page: number) => void
@@ -34,7 +33,12 @@ export function ResultsTable({
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.ACTIVE]: 'Activa',
     [VisitStatus.CLOSED]: 'Cerrada',
-    [VisitStatus.PENDING]: 'Pendiente'
+    [VisitStatus.PENDING]: 'Pendiente',
+    [VisitStatus.WAITING]: 'En Espera',
+    [VisitStatus.FINISHED]: 'Finalizado',
+    [VisitStatus.ATTENDED]: 'Atendida',
+    [VisitStatus.REJECTED]: 'Rechazada',
+    [VisitStatus.RESCHEDULED]: 'Reprogramada'
   }
 
   if (isLoading) {
@@ -65,49 +69,38 @@ export function ResultsTable({
         <Table>
           <TableHeader>
             <TableRow className="border-b bg-muted/20">
-              <TableHead className="w-24 font-mono text-[10px] uppercase tracking-wider px-6">RIF</TableHead>
+              <TableHead className="w-32 font-mono text-[10px] uppercase tracking-wider px-6">RIF</TableHead>
               <TableHead className="font-mono text-[10px] uppercase tracking-wider">Contribuyente</TableHead>
               <TableHead className="hidden md:table-cell font-mono text-[10px] uppercase tracking-wider">Registro</TableHead>
               <TableHead className="hidden lg:table-cell font-mono text-[10px] uppercase tracking-wider">Depto.</TableHead>
               <TableHead className="hidden sm:table-cell font-mono text-[10px] uppercase tracking-wider">Motivo</TableHead>
               <TableHead className="w-24 font-mono text-[10px] uppercase tracking-wider">Estado</TableHead>
-              <TableHead className="w-12 px-6"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visits.map((visit) => (
-              <TableRow key={visit.id} className="hover:bg-primary/[0.02] transition-colors group">
+            {visits.map((visit, index) => (
+              <TableRow key={`${visit.rif}-${index}`} className="hover:bg-primary/[0.02] transition-colors">
                 <TableCell className="font-mono text-xs font-semibold px-6">
-                  {visit.contributor.rif}
+                  {visit.rif}
                 </TableCell>
                 <TableCell>
                   <div className="py-1">
-                    <p className="font-semibold text-sm group-hover:text-primary transition-colors">{visit.contributor.name}</p>
-                    <p className="text-[11px] text-muted-foreground hidden sm:block font-medium">
-                      {formatTimeAgo(visit.entryDateTime)}
-                    </p>
+                    <p className="font-semibold text-sm">{visit.contribuyente}</p>
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xs font-medium text-muted-foreground">
-                  {formatDateTime(visit.entryDateTime)}
+                  {visit.registro || '-'}
                 </TableCell>
                 <TableCell className="hidden lg:table-cell text-xs font-medium">
-                  <span className="bg-muted px-2 py-0.5 rounded text-muted-foreground">{visit.department}</span>
+                  <span className="bg-muted px-2 py-0.5 rounded text-muted-foreground">{visit.depto}</span>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-xs text-muted-foreground truncate max-w-xs font-medium">
-                  {visit.reason}
+                  {visit.motivo}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={visit.status === VisitStatus.ACTIVE ? 'default' : visit.status === VisitStatus.CLOSED ? 'secondary' : 'outline'}>
-                    {statusLabel[visit.status]}
+                  <Badge variant={visit.estado === VisitStatus.WAITING ? 'outline' : 'default'}>
+                    {statusLabel[visit.estado]}
                   </Badge>
-                </TableCell>
-                <TableCell className="px-6 text-right">
-                  <Link href={`/${visit.id}`}>
-                    <Button variant="ghost" size="icon" className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
-                  </Link>
                 </TableCell>
               </TableRow>
             ))}

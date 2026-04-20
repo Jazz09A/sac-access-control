@@ -9,7 +9,7 @@ export const contributorSchema = z.object({
   rif: z
     .string()
     .min(1, 'RIF es requerido')
-    .regex(/^[VJE][-\d]{7,8}$/, 'RIF debe estar en formato válido (ej: V-12345678)'),
+    .regex(/^[VJE][-\d]{7,8}$/, 'RIF debe estar en formato válido (ej: J-98765432)'),
   name: z
     .string()
     .min(1, 'Nombre es requerido')

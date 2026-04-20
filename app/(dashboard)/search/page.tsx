@@ -3,53 +3,28 @@
 import { useState } from 'react'
 import { SearchBar } from '@/components/search/search-bar'
 import { ResultsTable } from '@/components/search/results-table'
-import { SearchFilters } from '@/types'
-import { mockVisits } from '@/services/mock-data'
+import { SearchFilters, VisitHistory } from '@/types'
+import { getVisitsHistory } from '@/services/visits'
 
 export default function SearchPage() {
-  const [filteredVisits, setFilteredVisits] = useState(mockVisits)
+  const [visitHistory, setVisitHistory] = useState<VisitHistory[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [totalCount, setTotalCount] = useState(0)
 
-  const handleSearch = (filters: SearchFilters) => {
+  const handleSearch = async (filters: SearchFilters) => {
     setIsLoading(true)
-    
-    // Simulate API call
-    setTimeout(() => {
-      let results = [...mockVisits]
-
-      // Filter by search term (RIF or Name)
-      if (filters.searchTerm) {
-        const term = filters.searchTerm.toLowerCase()
-        results = results.filter(
-          (visit) =>
-            visit.contributor.rif.toLowerCase().includes(term) ||
-            visit.contributor.name.toLowerCase().includes(term) ||
-            visit.fileNumber?.toLowerCase().includes(term)
-        )
-      }
-
-      // Filter by status
-      if (filters.status) {
-        results = results.filter((visit) => visit.status === filters.status)
-      }
-
-      // Filter by date range
-      if (filters.startDate) {
-        results = results.filter(
-          (visit) => new Date(visit.entryDateTime) >= filters.startDate!
-        )
-      }
-      if (filters.endDate) {
-        const endDate = new Date(filters.endDate)
-        endDate.setHours(23, 59, 59, 999)
-        results = results.filter(
-          (visit) => new Date(visit.entryDateTime) <= endDate
-        )
-      }
-
-      setFilteredVisits(results)
+    try {
+      const data = await getVisitsHistory(filters)
+      setVisitHistory(data || [])
+      setTotalCount(data?.length || 0)
+    } catch (error) {
+      console.error('Error fetching visit history:', error)
+      // For now, show empty results on error
+      setVisitHistory([])
+      setTotalCount(0)
+    } finally {
       setIsLoading(false)
-    }, 600)
+    }
   }
 
   return (
@@ -64,9 +39,9 @@ export default function SearchPage() {
       <SearchBar onSearch={handleSearch} isLoading={isLoading} />
 
       <ResultsTable
-        visits={filteredVisits}
+        visits={visitHistory}
         isLoading={isLoading}
-        totalCount={filteredVisits.length}
+        totalCount={totalCount}
       />
     </div>
   )

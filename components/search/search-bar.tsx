@@ -22,27 +22,37 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [status, setStatus] = useState<string>('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const ALL_STATUS_VALUE = 'all'
+  const [rif, setRif] = useState('')
+  const [contribuyente, setContribuyente] = useState('')
+  const [registro, setRegistro] = useState('')
+  const [departamento, setDepartamento] = useState('')
+  const [status, setStatus] = useState<string>(ALL_STATUS_VALUE)
+  const [fechaDesde, setFechaDesde] = useState('')
+  const [fechaHasta, setFechaHasta] = useState('')
   const [showFilters, setShowFilters] = useState(false)
 
   const handleSearch = () => {
     onSearch({
-      searchTerm: searchTerm || undefined,
-      status: status ? (status as any) : undefined,
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-      page: 1
+      rif: rif || undefined,
+      contribuyente: contribuyente || undefined,
+      registro: registro || undefined,
+      departamento: departamento || undefined,
+      fecha_desde: fechaDesde || undefined,
+      fecha_hasta: fechaHasta || undefined,
+      skip: 0,
+      limit: 100
     })
   }
 
   const handleReset = () => {
-    setSearchTerm('')
-    setStatus('')
-    setStartDate('')
-    setEndDate('')
+    setRif('')
+    setContribuyente('')
+    setRegistro('')
+    setDepartamento('')
+    setStatus(ALL_STATUS_VALUE)
+    setFechaDesde('')
+    setFechaHasta('')
     onSearch({})
   }
 
@@ -55,26 +65,54 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
   return (
     <Card className="p-8 border-border/50">
       <div className="space-y-6">
-        {/* Main Search Input */}
-        <div className="space-y-3">
+        {/* Main Search Inputs */}
+        <div className="space-y-4">
           <Label className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
-            Buscar por RIF, Nombre o Número de Expediente
+            Búsqueda Principal
           </Label>
-          <div className="flex gap-3">
-            <div className="flex-1 relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="rif" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                RIF
+              </Label>
               <Input
-                placeholder="ej: V-12345678 o Juan Pérez"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="pl-12 h-12 bg-muted/20 border-transparent focus-visible:bg-transparent"
+                id="rif"
+                placeholder="ej: J-12345678-9"
+                value={rif}
+                onChange={(e) => setRif(e.target.value)}
+                className="h-10 bg-muted/20 border-transparent focus-visible:bg-transparent"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="contribuyente" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                Contribuyente
+              </Label>
+              <Input
+                id="contribuyente"
+                placeholder="Nombre del contribuyente"
+                value={contribuyente}
+                onChange={(e) => setContribuyente(e.target.value)}
+                className="h-10 bg-muted/20 border-transparent focus-visible:bg-transparent"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="registro" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                Número de Registro
+              </Label>
+              <Input
+                id="registro"
+                placeholder="ej: EXP-2026-00045"
+                value={registro}
+                onChange={(e) => setRegistro(e.target.value)}
+                className="h-10 bg-muted/20 border-transparent focus-visible:bg-transparent"
+              />
+            </div>
+          </div>
+          <div className="flex justify-center">
             <Button
               onClick={handleSearch}
               disabled={isLoading}
-              className="px-8 h-12 text-base font-semibold"
+              className="px-8 h-10 text-sm font-semibold"
             >
               Buscar
             </Button>
@@ -97,6 +135,20 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
         {/* Advanced Filters */}
         {showFilters && (
           <div className="pt-6 border-t border-border/50 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2 duration-300">
+            {/* Department Filter */}
+            <div className="space-y-2">
+              <Label htmlFor="departamento" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                Departamento
+              </Label>
+              <Input
+                id="departamento"
+                placeholder="ej: Fiscalizacion"
+                value={departamento}
+                onChange={(e) => setDepartamento(e.target.value)}
+                className="h-10 bg-muted/20 border-transparent"
+              />
+            </div>
+
             {/* Status Filter */}
             <div className="space-y-2">
               <Label htmlFor="status" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
@@ -107,7 +159,7 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
                   <SelectValue placeholder="Todos los estados" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos los estados</SelectItem>
+                  <SelectItem value={ALL_STATUS_VALUE}>Todos los estados</SelectItem>
                   {VISIT_STATUS_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
@@ -119,33 +171,33 @@ export function SearchBar({ onSearch, isLoading = false }: SearchBarProps) {
 
             {/* Date Range Start */}
             <div className="space-y-2">
-              <Label htmlFor="startDate" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
-                Desde
+              <Label htmlFor="fechaDesde" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                Fecha Desde
               </Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  id="startDate"
+                  id="fechaDesde"
                   type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
+                  value={fechaDesde}
+                  onChange={(e) => setFechaDesde(e.target.value)}
                   className="pl-10 h-10 bg-muted/20 border-transparent"
                 />
               </div>
             </div>
 
             {/* Date Range End */}
-            <div className="space-y-2">
-              <Label htmlFor="endDate" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
-                Hasta
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="fechaHasta" className="text-[10px] font-mono font-bold uppercase tracking-[0.05em] text-muted-foreground block px-1">
+                Fecha Hasta
               </Label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  id="endDate"
+                  id="fechaHasta"
                   type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
+                  value={fechaHasta}
+                  onChange={(e) => setFechaHasta(e.target.value)}
                   className="pl-10 h-10 bg-muted/20 border-transparent"
                 />
               </div>

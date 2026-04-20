@@ -335,12 +335,12 @@ export function PhotoUpload({
                     </p>
                   </div>
                   <div className="relative w-full aspect-video overflow-hidden rounded-lg border border-border/70 bg-muted">
-                    <iframe
+                    {/* <iframe
                       src={VDO_NINJA_ROOM_URL}
                       title="VDO Ninja Room"
                       className="h-full w-full"
                       allow="camera; microphone; autoplay; fullscreen"
-                    />
+                    /> */}
                   </div>
                   <div className="grid gap-2 sm:grid-cols-3">
                     <Button
@@ -436,7 +436,7 @@ export function PhotoUpload({
                       <RefreshCcw className="mr-2 h-4 w-4" />
                       Reintentar
                     </Button>
-                    <Button
+                    {/* <Button
                       type="button"
                       variant="outline"
                       size="sm"
@@ -444,7 +444,7 @@ export function PhotoUpload({
                       className="flex-1"
                     >
                       VDO.Ninja
-                    </Button>
+                    </Button> */}
                     <Button
                       type="button"
                       variant="outline"
@@ -499,7 +499,7 @@ export function PhotoUpload({
                     <Camera className="w-4 h-4 mr-2" />
                     {isStartingCamera ? 'Abriendo cámara...' : 'Tomar Foto'}
                   </Button>
-                  <Button
+                  {/* <Button
                     type="button"
                     variant="outline"
                     size="sm"
@@ -507,7 +507,7 @@ export function PhotoUpload({
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     VDO.Ninja
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>

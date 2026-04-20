@@ -21,6 +21,11 @@ export function RecentVisits({ visits }: RecentVisitsProps) {
     [VisitStatus.ACTIVE]: 'border-primary/20 bg-primary/10 text-primary',
     [VisitStatus.CLOSED]: 'border-white/8 bg-white/[0.04] text-foreground/80',
     [VisitStatus.PENDING]: 'border-amber-400/15 bg-amber-400/10 text-amber-200',
+    [VisitStatus.WAITING]: 'border-blue-400/15 bg-blue-400/10 text-blue-200',
+    [VisitStatus.FINISHED]: 'border-green-400/15 bg-green-400/10 text-green-200',
+    [VisitStatus.ATTENDED]: 'border-emerald-400/15 bg-emerald-400/10 text-emerald-200',
+    [VisitStatus.REJECTED]: 'border-red-400/15 bg-red-400/10 text-red-200',
+    [VisitStatus.RESCHEDULED]: 'border-purple-400/15 bg-purple-400/10 text-purple-200',
   }
 
   const statusLabel = (s: VisitStatus) => t(`dashboard.status.${s}`)
