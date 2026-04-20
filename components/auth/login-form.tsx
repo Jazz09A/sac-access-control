@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2, Lock, ShieldCheck, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,11 +12,6 @@ export function LoginForm() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-
-  // Debug: log when component mounts
-  useEffect(() => {
-    console.log('[LoginForm] Component mounted, JS is working')
-  }, [])
 
   // Clear credentials from URL immediately on mount (security)
   useEffect(() => {
@@ -42,14 +37,11 @@ export function LoginForm() {
     setLoading(true)
 
     try {
-      console.log('[LoginForm] Intentando login...')
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: username.trim(), password }),
       })
-
-      console.log('[LoginForm] Response status:', res.status)
 
       let data: { ok?: boolean; detail?: string } = {}
       try {
@@ -58,15 +50,12 @@ export function LoginForm() {
         // Ignore parse error, will handle below
       }
 
-      console.log('[LoginForm] Response data:', data)
-
       if (!res.ok) {
         setError(data.detail || 'Credenciales incorrectas')
         return
       }
 
       if (data.ok === true) {
-        console.log('[LoginForm] Login exitoso, redirigiendo...')
         // Force full page reload to trigger middleware cookie check
         window.location.href = '/'
       } else {
@@ -98,27 +87,13 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-        <form
-          onSubmit={onSubmit}
-          className="space-y-5"
-          noValidate
-          action="javascript:void(0)"
-          role="form"
-        >
-          {/* Fallback for users without JavaScript - prevents credential exposure */}
+        <form onSubmit={onSubmit} className="space-y-5" noValidate>
           <noscript>
             <div className="rounded-lg bg-destructive/10 border border-destructive/30 p-3 text-sm text-destructive text-center">
               <strong>Error:</strong> JavaScript es requerido para iniciar sesión de forma segura.
               Sin JavaScript, las credenciales podrían exponerse en la URL.
               Por favor habilite JavaScript o contacte al administrador.
             </div>
-            {/* Disable the form when JS is not available */}
-            <style>{`
-              form[role="form"] button[type="submit"] {
-                display: none !important;
-              }
-            `}</style>
           </noscript>
           <div className="space-y-2">
             <Label htmlFor="username" className="text-xs uppercase tracking-wider text-muted-foreground">

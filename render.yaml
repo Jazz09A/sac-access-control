@@ -3,8 +3,8 @@ services:
   - type: web
     name: sac-administrative-frontend
     runtime: node
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm run build
+    startCommand: pnpm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -15,14 +15,3 @@ services:
       - key: AUTH_JWT_SECRET
         sync: false  # Set in dashboard
     healthCheckPath: /
-    # Ensure static files are served correctly
-    routes:
-      - type: rewrite
-        source: /_next/static/(.*)
-        destination: /_next/static/$1
-      - type: rewrite
-        source: /static/(.*)
-        destination: /static/$1
-      - type: rewrite
-        source: /(.*)
-        destination: /$1
