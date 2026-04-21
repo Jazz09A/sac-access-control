@@ -182,6 +182,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
 
       // Prepare request data - department is always "Fiscalización"
       const visitRequest = {
+        contributor_rif: data.contributor.rif,
         contributor_name: data.contributor.name,
         responsible_person: data.contributor.name, // Using contributor name as responsible person
         fiscal_id: data.visit.fiscalId,

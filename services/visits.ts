@@ -13,6 +13,8 @@ export interface VisitsListResponse {
 }
 
 export interface CreateVisitRequest {
+  /** RIF fiscal del contribuyente (obligatorio en el backend) */
+  contributor_rif: string
   contributor_name: string
   responsible_person: string
   fiscal_id: number | string
@@ -65,7 +67,8 @@ export interface CreateVisitWithPhotoRequest extends CreateVisitRequest {
 export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): Promise<Visit> {
   const formData = new FormData()
 
-  // Add all text fields
+  // Add all text fields (contributor_rif es obligatorio en POST /api/v1/visits/)
+  formData.append('contributor_rif', data.contributor_rif.trim())
   formData.append('contributor_name', data.contributor_name)
   formData.append('responsible_person', data.responsible_person)
   formData.append('fiscal_id', String(data.fiscal_id))
