@@ -8,11 +8,15 @@ const USER_NAME_COOKIE = 'sac_user_name'
 type MePayload = {
   username: string | null
   fullName?: string | null
+  role?: string | null
 }
 
-type BackendUser = {
+type BackendMeResponse = {
   person_id: string
   full_name: string
+  role: string
+  email?: string
+  is_active?: boolean
 }
 
 function normalizeBackendOrigin(raw: string): string {
@@ -23,24 +27,28 @@ function normalizeBackendOrigin(raw: string): string {
   return u
 }
 
-async function getUserFullName(personId: string): Promise<string | null> {
+async function getUserInfoFromBackend(token: string): Promise<BackendMeResponse | null> {
   const backendRaw = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
-  const url = `${normalizeBackendOrigin(backendRaw)}/api/v1/users/?skip=0&limit=100`
+  const url = `${normalizeBackendOrigin(backendRaw)}/api/v1/auth/me`
 
   try {
     const response = await fetch(url, {
       cache: 'no-store',
-      headers: { Accept: 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
     })
 
     if (!response.ok) {
+      console.error('[API Me] Backend auth/me error:', response.status)
       return null
     }
 
-    const users = (await response.json().catch(() => [])) as BackendUser[]
-    const currentUser = users.find((user) => user.person_id === personId)
-    return currentUser?.full_name ?? null
-  } catch {
+    const user = (await response.json().catch(() => null)) as BackendMeResponse | null
+    return user
+  } catch (err) {
+    console.error('[API Me] Error fetching from backend:', err)
     return null
   }
 }
@@ -72,11 +80,15 @@ export async function GET() {
     return NextResponse.json({ username: null, fullName: null }, { status: 401 })
   }
 
-  const fullName = storedUserName || (await getUserFullName(personId))
+  const backendUser = await getUserInfoFromBackend(token)
+  console.log('[API Me] Backend user:', backendUser)
+
   const payload: MePayload = {
     username: personId,
-    fullName,
+    fullName: storedUserName || backendUser?.full_name || null,
+    role: backendUser?.role || null,
   }
 
+  console.log('[API Me] Response payload:', payload)
   return NextResponse.json(payload)
 }

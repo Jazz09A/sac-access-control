@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { LoginDebug } from './login-debug'
 
 export function LoginForm() {
   // Log inicial del componente
@@ -174,9 +173,6 @@ export function LoginForm() {
             )}
           </Button>
         </form>
-
-        {/* Debug info - solo visible en localhost o con ?debug=true */}
-        <LoginDebug />
       </CardContent>
     </Card>
   )

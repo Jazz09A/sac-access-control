@@ -39,6 +39,7 @@ export function Topbar() {
   const [currentDateTime, setCurrentDateTime] = useState<string>('')
   const [mounted, setMounted] = useState(false)
   const [displayName, setDisplayName] = useState<string>('Operador')
+  const [userRole, setUserRole] = useState<string>('')
   const [helpOpen, setHelpOpen] = useState(false)
   const { theme, setTheme } = useTheme()
 
@@ -60,18 +61,30 @@ export function Topbar() {
       try {
         const res = await fetch('/api/auth/me')
         const data = await res.json().catch(() => ({}))
+        console.log('[Topbar] /api/auth/me response:', data)
+
+        // Si es 401 (no autorizado), hacer logout y redirigir al login
+        if (res.status === 401) {
+          console.log('[Topbar] Unauthorized, logging out and redirecting to login')
+          await fetch('/api/auth/logout', { method: 'POST' })
+          router.push('/login')
+          return
+        }
+
         if (!cancelled && res.ok && (data?.fullName || data?.username)) {
           const u = String(data.fullName ?? data.username)
           setDisplayName(u.charAt(0).toUpperCase() + u.slice(1))
+          setUserRole(data?.role || '')
+          console.log('[Topbar] Role set to:', data?.role)
         }
-      } catch {
-        /* ignore */
+      } catch (err) {
+        console.error('[Topbar] Error fetching me:', err)
       }
     })()
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [router])
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -143,7 +156,7 @@ export function Topbar() {
                   </div>
                   <div className="hidden min-w-0 flex-1 pr-1 sm:block">
                     <p className="truncate text-sm font-medium text-foreground">{displayName}</p>
-                    <p className="text-xs text-muted-foreground">{t('topbar.accountSubtitle')}</p>
+                    <p className="text-xs text-muted-foreground">{userRole ? (userRole === 'admin' ? 'Administrador' : 'Usuario') : t('topbar.accountSubtitle')}</p>
                   </div>
                   <ChevronDown className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
                 </button>
@@ -158,7 +171,7 @@ export function Topbar() {
                 </DropdownMenuLabel>
                 <div className="px-2 pb-2">
                   <p className="truncate text-sm font-semibold text-foreground">{displayName}</p>
-                  <p className="text-xs text-muted-foreground">{t('topbar.role')}</p>
+                  <p className="text-xs text-muted-foreground">{userRole ? (userRole === 'admin' ? 'Administrador' : 'Usuario') : t('topbar.role')}</p>
                 </div>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
