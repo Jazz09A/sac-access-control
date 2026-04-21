@@ -6,8 +6,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { LoginDebug } from './login-debug'
 
 export function LoginForm() {
+  // Log inicial del componente
+  if (typeof window !== 'undefined') {
+    console.log('[LoginForm] Componente montado')
+    console.log('[LoginForm] URL actual:', window.location.href)
+    console.log('[LoginForm] Cookies:', document.cookie)
+  }
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -28,6 +36,8 @@ export function LoginForm() {
   }, [])
 
   async function doLogin() {
+    console.log('[LoginForm] ========== INICIO LOGIN ==========')
+
     if (!username.trim() || !password) {
       setError('Por favor ingrese cédula y contraseña')
       return
@@ -36,6 +46,9 @@ export function LoginForm() {
     setError(null)
     setLoading(true)
 
+    console.log('[LoginForm] Enviando petición a /api/auth/login...')
+    console.log('[LoginForm] Username:', username.trim())
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -43,29 +56,38 @@ export function LoginForm() {
         body: JSON.stringify({ username: username.trim(), password }),
       })
 
+      console.log('[LoginForm] Response status:', res.status)
+      console.log('[LoginForm] Response headers:', Object.fromEntries(res.headers.entries()))
+
       let data: { ok?: boolean; detail?: string } = {}
       try {
         data = await res.json()
-      } catch {
-        // Ignore parse error, will handle below
+        console.log('[LoginForm] Response data:', data)
+      } catch (parseErr) {
+        console.error('[LoginForm] Error parseando JSON:', parseErr)
       }
 
       if (!res.ok) {
+        console.error('[LoginForm] Error en response:', data.detail || 'Credenciales incorrectas')
         setError(data.detail || 'Credenciales incorrectas')
         return
       }
 
       if (data.ok === true) {
+        console.log('[LoginForm] Login exitoso, redirigiendo...')
         // Force full page reload to trigger middleware cookie check
         window.location.href = '/'
       } else {
+        console.error('[LoginForm] Respuesta inesperada:', data)
         setError('Respuesta inesperada del servidor')
       }
     } catch (err) {
-      console.error('[LoginForm] Error:', err)
+      console.error('[LoginForm] ERROR en fetch:', err)
+      console.error('[LoginForm] Error details:', err instanceof Error ? err.message : String(err))
       setError('No se pudo conectar. ¿Está el backend en marcha?')
     } finally {
       setLoading(false)
+      console.log('[LoginForm] ========== FIN LOGIN ==========')
     }
   }
 
@@ -152,6 +174,9 @@ export function LoginForm() {
             )}
           </Button>
         </form>
+
+        {/* Debug info - solo visible en localhost o con ?debug=true */}
+        <LoginDebug />
       </CardContent>
     </Card>
   )
