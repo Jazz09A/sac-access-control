@@ -8,7 +8,7 @@ export const RIF_PREFIX_OPTIONS = [
   { value: 'V', label: 'V - Venezolano' },
   { value: 'J', label: 'J - Jurídico' },
   { value: 'G', label: 'G - Gobierno' },
-  // { value: 'E', label: 'E - Extranjero' },
+  { value: 'E', label: 'E - Extranjero' },
   // { value: 'P', label: 'P - Pasaporte' },
   // { value: 'C', label: 'C - Comunitario' }
 ]

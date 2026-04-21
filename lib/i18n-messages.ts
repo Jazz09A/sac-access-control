@@ -8,12 +8,12 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'dashboard.executiveBadge': 'Resumen ejecutivo',
     'dashboard.statusLabel': 'Estado actual',
     'dashboard.currentActivity': 'Actividad en curso',
-    'dashboard.taxpayersInDivision': 'contribuyentes dentro del establecimiento',
+    'dashboard.taxpayersInDivision': 'contribuyentes dentro de la region',
 
     // Métricas
     'dashboard.metric.entriesTitle': 'Entradas Hoy',
     'dashboard.metric.entriesDesc': 'Total de contribuyentes registrados',
-    'dashboard.metric.insideTitle': 'Dentro del Establecimiento',
+    'dashboard.metric.insideTitle': 'Dentro de la region',
     'dashboard.metric.insideDesc': 'Visitantes activos en el momento',
     'dashboard.metric.attendedTitle': 'Visitas Atendidas',
     'dashboard.metric.attendedDesc': 'Visitas completadas hoy',
@@ -140,12 +140,12 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'dashboard.executiveBadge': 'Executive summary',
     'dashboard.statusLabel': 'Current status',
     'dashboard.currentActivity': 'Current activity',
-    'dashboard.taxpayersInDivision': 'taxpayers inside the facility',
+    'dashboard.taxpayersInDivision': 'taxpayers inside the region',
 
     // Metrics
     'dashboard.metric.entriesTitle': 'Entries Today',
     'dashboard.metric.entriesDesc': 'Total registered taxpayers',
-    'dashboard.metric.insideTitle': 'Inside Facility',
+    'dashboard.metric.insideTitle': 'Inside the region',
     'dashboard.metric.insideDesc': 'Active visitors at the moment',
     'dashboard.metric.attendedTitle': 'Attended Visits',
     'dashboard.metric.attendedDesc': 'Visits completed today',
