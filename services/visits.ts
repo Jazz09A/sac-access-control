@@ -3,6 +3,7 @@
  */
 
 import { apiRequest } from '@/lib/api/client'
+import { DEFAULT_LOCAL_BACKEND_URL } from '@/utils/constants'
 import { Visit, VisitHistory, SearchFilters, VisitStatus } from '@/types'
 
 export interface VisitsListResponse {
@@ -90,14 +91,11 @@ export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): P
   // Add photo file
   formData.append('photo', data.photo)
 
-  // Get base URL with fallback for backward compatibility
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  // Misma lógica que lib/api/client: en el navegador solo existe NEXT_PUBLIC_*; si no, localhost.
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL
     || process.env.NEXT_PUBLIC_API_BASE_URL
-    || ''
-
-  if (!baseUrl) {
-    throw new Error('Falta configurar NEXT_PUBLIC_BACKEND_URL en .env.local o .env')
-  }
+    || DEFAULT_LOCAL_BACKEND_URL
 
   // Send request without Content-Type header (browser sets it with boundary)
   const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/v1/visits/`, {

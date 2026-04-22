@@ -4,6 +4,9 @@ import { ContributorType, VisitStatus } from '@/types'
  * Application Constants
  */
 
+/** API backend si no hay `NEXT_PUBLIC_BACKEND_URL` / `BACKEND_URL` (dev local, típico FastAPI). */
+export const DEFAULT_LOCAL_BACKEND_URL = 'http://localhost:8000'
+
 export const RIF_PREFIX_OPTIONS = [
   { value: 'V', label: 'V - Venezolano' },
   { value: 'J', label: 'J - Jurídico' },

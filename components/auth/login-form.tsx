@@ -10,9 +10,9 @@ import { Label } from '@/components/ui/label'
 export function LoginForm() {
   // Log inicial del componente
   if (typeof window !== 'undefined') {
-    console.log('[LoginForm] Componente montado')
-    console.log('[LoginForm] URL actual:', window.location.href)
-    console.log('[LoginForm] Cookies:', document.cookie)
+        // console.log('[LoginForm] Componente montado')
+        // console.log('[LoginForm] URL actual:', window.location.href)
+        // console.log('[LoginForm] Cookies:', document.cookie)
   }
 
   const [username, setUsername] = useState('')
@@ -35,7 +35,7 @@ export function LoginForm() {
   }, [])
 
   async function doLogin() {
-    console.log('[LoginForm] ========== INICIO LOGIN ==========')
+    // console.log('[LoginForm] ========== INICIO LOGIN ==========')
 
     if (!username.trim() || !password) {
       setError('Por favor ingrese cédula y contraseña')
@@ -45,8 +45,8 @@ export function LoginForm() {
     setError(null)
     setLoading(true)
 
-    console.log('[LoginForm] Enviando petición a /api/auth/login...')
-    console.log('[LoginForm] Username:', username.trim())
+    // console.log('[LoginForm] Enviando petición a /api/auth/login...')
+    // console.log('[LoginForm] Username:', username.trim())
 
     try {
       const res = await fetch('/api/auth/login', {
@@ -55,13 +55,13 @@ export function LoginForm() {
         body: JSON.stringify({ username: username.trim(), password }),
       })
 
-      console.log('[LoginForm] Response status:', res.status)
-      console.log('[LoginForm] Response headers:', Object.fromEntries(res.headers.entries()))
+      // console.log('[LoginForm] Response status:', res.status)
+      // console.log('[LoginForm] Response headers:', Object.fromEntries(res.headers.entries()))
 
       let data: { ok?: boolean; detail?: string } = {}
       try {
         data = await res.json()
-        console.log('[LoginForm] Response data:', data)
+        // console.log('[LoginForm] Response data:', data)
       } catch (parseErr) {
         console.error('[LoginForm] Error parseando JSON:', parseErr)
       }
@@ -73,7 +73,7 @@ export function LoginForm() {
       }
 
       if (data.ok === true) {
-        console.log('[LoginForm] Login exitoso, redirigiendo...')
+        // console.log('[LoginForm] Login exitoso, redirigiendo...')
         // Force full page reload to trigger middleware cookie check
         window.location.href = '/'
       } else {
@@ -86,7 +86,7 @@ export function LoginForm() {
       setError('No se pudo conectar. ¿Está el backend en marcha?')
     } finally {
       setLoading(false)
-      console.log('[LoginForm] ========== FIN LOGIN ==========')
+      // console.log('[LoginForm] ========== FIN LOGIN ==========')
     }
   }
 

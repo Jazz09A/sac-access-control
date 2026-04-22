@@ -33,7 +33,7 @@ export default function NewContributorPage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      console.log('[v0] New contributor created:', data)
+      // console.log('[v0] New contributor created:', data)  
       toast.success('¡Contribuyente creado correctamente!')
 
       router.push('/contributors')

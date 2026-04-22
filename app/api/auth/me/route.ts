@@ -81,7 +81,7 @@ export async function GET() {
   }
 
   const backendUser = await getUserInfoFromBackend(token)
-  console.log('[API Me] Backend user:', backendUser)
+  // console.log('[API Me] Backend user:', backendUser)
 
   const payload: MePayload = {
     username: personId,
@@ -89,6 +89,6 @@ export async function GET() {
     role: backendUser?.role || null,
   }
 
-  console.log('[API Me] Response payload:', payload)
+  // console.log('[API Me] Response payload:', payload)
   return NextResponse.json(payload)
 }

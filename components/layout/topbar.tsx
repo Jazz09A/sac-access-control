@@ -13,6 +13,7 @@ import {
   SlidersHorizontal,
   Sun,
   User,
+  UserPlus,
 } from 'lucide-react'
 import { formatDateTime, getVenezuelaTime } from '@/utils/formatters'
 import { Button } from '@/components/ui/button'
@@ -61,11 +62,11 @@ export function Topbar() {
       try {
         const res = await fetch('/api/auth/me')
         const data = await res.json().catch(() => ({}))
-        console.log('[Topbar] /api/auth/me response:', data)
+        // console.log('[Topbar] /api/auth/me response:', data)
 
         // Si es 401 (no autorizado), hacer logout y redirigir al login
         if (res.status === 401) {
-          console.log('[Topbar] Unauthorized, logging out and redirecting to login')
+          // console.log('[Topbar] Unauthorized, logging out and redirecting to login')
           await fetch('/api/auth/logout', { method: 'POST' })
           router.push('/login')
           return
@@ -75,7 +76,7 @@ export function Topbar() {
           const u = String(data.fullName ?? data.username)
           setDisplayName(u.charAt(0).toUpperCase() + u.slice(1))
           setUserRole(data?.role || '')
-          console.log('[Topbar] Role set to:', data?.role)
+          // console.log('[Topbar] Role set to:', data?.role)
         }
       } catch (err) {
         console.error('[Topbar] Error fetching me:', err)
@@ -174,6 +175,15 @@ export function Topbar() {
                   <p className="text-xs text-muted-foreground">{userRole ? (userRole === 'admin' ? 'Administrador' : 'Usuario') : t('topbar.role')}</p>
                 </div>
                 <DropdownMenuSeparator className="bg-white/10" />
+                {userRole === 'admin' ? (
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-2 rounded-xl py-2.5"
+                    onClick={() => router.push('/admin/users/new')}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    {t('topbar.createUser')}
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuItem
                   className="cursor-pointer gap-2 rounded-xl py-2.5 disabled:opacity-50" disabled={true}
                   // onClick={() => router.push('/settings#perfil')}

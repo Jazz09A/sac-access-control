@@ -1,3 +1,5 @@
+import { DEFAULT_LOCAL_BACKEND_URL } from '@/utils/constants'
+
 export class ApiError extends Error {
   status: number
   detail?: string
@@ -15,18 +17,12 @@ const getApiBaseUrl = () => {
   // Server-side: both NEXT_PUBLIC_BACKEND_URL and BACKEND_URL are available
   const isServer = typeof window === 'undefined'
 
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BACKEND_URL
     || (isServer ? process.env.BACKEND_URL : undefined)
     || (isServer ? process.env.API_BASE_URL : undefined)
+    || DEFAULT_LOCAL_BACKEND_URL
 
-  if (!baseUrl) {
-    const msg = isServer
-      ? 'Falta configurar BACKEND_URL o NEXT_PUBLIC_BACKEND_URL en .env.local o .env'
-      : 'Falta configurar NEXT_PUBLIC_BACKEND_URL en .env.local (requerido para el navegador)'
-    throw new ApiError(msg, 500)
-  }
-
-  console.log('[API] baseUrl:', baseUrl)
   return baseUrl.replace(/\/+$/, '')
 }
 

@@ -63,6 +63,24 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'topbar.darkMode': 'Modo oscuro',
     'topbar.logout': 'Cerrar sesión',
     'topbar.alertsTooltip': 'Alertas',
+    'topbar.createUser': 'Crear usuario',
+
+    // Admin — usuarios
+    'users.create.title': 'Nuevo usuario',
+    'users.create.subtitle': 'Crea un usuario del sistema. Solo los administradores pueden acceder a esta acción; el backend valida el rol.',
+    'users.create.cedula': 'Cédula (person_id)',
+    'users.create.fullName': 'Nombre completo',
+    'users.create.email': 'Correo electrónico (opcional)',
+    'users.create.password': 'Contraseña',
+    'users.create.passwordHint': 'Mínimo 8 caracteres, según la API.',
+    'users.create.role': 'Rol',
+    'users.create.roleAdmin': 'Administrador',
+    'users.create.roleUser': 'Usuario',
+    'users.create.active': 'Usuario activo',
+    'users.create.submit': 'Crear usuario',
+    'users.create.back': 'Volver al inicio',
+    'users.create.forbidden': 'No tiene permisos para acceder a esta página.',
+    'users.create.success': 'Usuario creado correctamente',
 
     // Sidebar
     'nav.dashboard': 'Dashboard',
@@ -195,6 +213,24 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'topbar.darkMode': 'Dark mode',
     'topbar.logout': 'Sign out',
     'topbar.alertsTooltip': 'Alerts',
+    'topbar.createUser': 'Create user',
+
+    // Admin — users
+    'users.create.title': 'New user',
+    'users.create.subtitle': 'Create a system user. Only administrators can use this; the backend enforces the role.',
+    'users.create.cedula': 'ID (person_id)',
+    'users.create.fullName': 'Full name',
+    'users.create.email': 'Email (optional)',
+    'users.create.password': 'Password',
+    'users.create.passwordHint': 'At least 8 characters per API requirements.',
+    'users.create.role': 'Role',
+    'users.create.roleAdmin': 'Administrator',
+    'users.create.roleUser': 'User',
+    'users.create.active': 'User active',
+    'users.create.submit': 'Create user',
+    'users.create.back': 'Back to home',
+    'users.create.forbidden': 'You do not have permission to access this page.',
+    'users.create.success': 'User created successfully',
 
     // Sidebar
     'nav.dashboard': 'Dashboard',
