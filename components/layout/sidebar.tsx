@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Command,
   Sparkles,
+  UserCheck,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,8 @@ const navConfig = [
   { href: '/', msgKey: 'nav.dashboard' as const, icon: LayoutDashboard },
   { href: '/entry', msgKey: 'nav.entry' as const, icon: LogIn },
   { href: '/search', msgKey: 'nav.search' as const, icon: Search },
-  // { href: '/settings', msgKey: 'nav.settings' as const, icon: Settings },
+  { href: '/fiscals', msgKey: 'nav.fiscals' as const, icon: UserCheck },
+  { href: '/settings', msgKey: 'nav.settings' as const, icon: Settings },
 ]
 
 export function Sidebar() {
