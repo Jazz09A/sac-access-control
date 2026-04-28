@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getVenezuelaDate } from '@/utils/formatters'
 
 const COOKIE = 'sac_token'
 
@@ -32,6 +33,8 @@ export async function GET(request: NextRequest) {
   const fiscalId = incoming.get('fiscal_id')
   const statusFilter = incoming.get('status')
   const q = incoming.get('q')
+  const dateFrom = incoming.get('date_from')
+  const dateTo = incoming.get('date_to')
 
   if (fiscalId && fiscalId !== 'all') query.set('fiscal_id', fiscalId)
   if (statusFilter && statusFilter !== 'all') {
@@ -39,6 +42,13 @@ export async function GET(request: NextRequest) {
     if (mapped) query.set('status_filter', mapped)
   }
   if (q) query.set('q', q)
+  if (dateFrom) query.set('date_from', dateFrom)
+  if (dateTo) query.set('date_to', dateTo)
+  if (!dateFrom && !dateTo) {
+    const todayVz = getVenezuelaDate()
+    query.set('date_from', todayVz)
+    query.set('date_to', todayVz)
+  }
   query.set('limit', '500')
 
   try {

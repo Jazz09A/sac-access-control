@@ -11,6 +11,7 @@ export default function SearchPage() {
   const [visitHistory, setVisitHistory] = useState<VisitHistory[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
+  const [processingVisitId, setProcessingVisitId] = useState<string | null>(null)
 
   const handleSearch = async (filters: SearchFilters) => {
     setIsLoading(true)
@@ -29,6 +30,7 @@ export default function SearchPage() {
   }
 
   const handleMarkAsAttended = async (visitId: string) => {
+    setProcessingVisitId(visitId)
     try {
       await markVisitAsAttended(visitId)
       toast.success('Visita marcada como atendida')
@@ -41,10 +43,13 @@ export default function SearchPage() {
     } catch (error) {
       console.error('Error marking as attended:', error)
       toast.error('Error al marcar como atendido')
+    } finally {
+      setProcessingVisitId(null)
     }
   }
 
   const handleRegisterExit = async (visitId: string) => {
+    setProcessingVisitId(visitId)
     try {
       const now = new Date()
       const exitDate = now.toISOString().split('T')[0]
@@ -61,6 +66,8 @@ export default function SearchPage() {
     } catch (error) {
       console.error('Error registering exit:', error)
       toast.error('Error al registrar la salida')
+    } finally {
+      setProcessingVisitId(null)
     }
   }
 
@@ -79,6 +86,7 @@ export default function SearchPage() {
         visits={visitHistory}
         isLoading={isLoading}
         totalCount={totalCount}
+        processingVisitId={processingVisitId}
         onMarkAsAttended={handleMarkAsAttended}
         onRegisterExit={handleRegisterExit}
       />

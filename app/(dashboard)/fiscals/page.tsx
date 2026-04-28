@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -14,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLocale } from '@/components/providers/locale-provider'
-import { formatDuration, formatTime } from '@/utils/formatters'
+import { formatDuration, formatTime, getVenezuelaDate } from '@/utils/formatters'
 import { toast } from 'sonner'
 import { Download, RefreshCw } from 'lucide-react'
 
@@ -87,6 +88,8 @@ export default function FiscalsPage() {
   const [fiscalFilter, setFiscalFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'activa' | 'cerrada' | 'pendiente'>('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [dateFrom, setDateFrom] = useState(getVenezuelaDate())
+  const [dateTo, setDateTo] = useState(getVenezuelaDate())
   const [reloadTick, setReloadTick] = useState(0)
 
   useEffect(() => {
@@ -98,6 +101,8 @@ export default function FiscalsPage() {
         if (fiscalFilter !== 'all') params.set('fiscal_id', fiscalFilter)
         if (statusFilter !== 'all') params.set('status', statusFilter)
         if (searchTerm.trim()) params.set('q', searchTerm.trim())
+        if (dateFrom) params.set('date_from', dateFrom)
+        if (dateTo) params.set('date_to', dateTo)
 
         const res = await fetch(`/api/reports/fiscals?${params.toString()}`, {
           method: 'GET',
@@ -137,7 +142,7 @@ export default function FiscalsPage() {
     return () => {
       cancelled = true
     }
-  }, [fiscalFilter, statusFilter, searchTerm, reloadTick])
+  }, [fiscalFilter, statusFilter, searchTerm, dateFrom, dateTo, reloadTick])
 
   const allFiscals = useMemo(() => {
     const map = new Map<string, string>()
@@ -222,6 +227,12 @@ export default function FiscalsPage() {
 
   const exportPrintableReport = () => {
     const reportDate = new Date().toLocaleString('es-VE')
+    const reportPeriod =
+      dateFrom && dateTo
+        ? dateFrom === dateTo
+          ? dateFrom
+          : `${dateFrom} al ${dateTo}`
+        : dateFrom || dateTo || getVenezuelaDate()
     const reportNumber = `RPT-FIS-LIB-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${String(
       filteredVisits.length,
     ).padStart(4, '0')}`
@@ -279,6 +290,9 @@ export default function FiscalsPage() {
             <div class="report-meta">
               <span><strong>Numero de reporte:</strong> ${reportNumber}</span>
               <span><strong>Fecha y hora de emision:</strong> ${reportDate}</span>
+            </div>
+            <div class="report-meta">
+              <span><strong>Periodo analizado:</strong> ${reportPeriod}</span>
             </div>
           </div>
           <div class="summary">
@@ -350,7 +364,7 @@ export default function FiscalsPage() {
             <CardTitle className="text-sm text-muted-foreground">{t('fiscals.summary.totalVisits')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{summary.totalVisits}</p>
+            {isLoading ? <Skeleton className="h-10 w-16" /> : <p className="text-3xl font-semibold">{summary.totalVisits}</p>}
           </CardContent>
         </Card>
         <Card className="py-4">
@@ -358,7 +372,7 @@ export default function FiscalsPage() {
             <CardTitle className="text-sm text-muted-foreground">{t('fiscals.summary.totalFiscals')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{summary.totalFiscals}</p>
+            {isLoading ? <Skeleton className="h-10 w-16" /> : <p className="text-3xl font-semibold">{summary.totalFiscals}</p>}
           </CardContent>
         </Card>
         <Card className="py-4">
@@ -366,7 +380,7 @@ export default function FiscalsPage() {
             <CardTitle className="text-sm text-muted-foreground">{t('fiscals.summary.avgStay')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{formatMinutes(summary.avgStay)}</p>
+            {isLoading ? <Skeleton className="h-10 w-20" /> : <p className="text-3xl font-semibold">{formatMinutes(summary.avgStay)}</p>}
           </CardContent>
         </Card>
         <Card className="py-4">
@@ -374,7 +388,7 @@ export default function FiscalsPage() {
             <CardTitle className="text-sm text-muted-foreground">{t('fiscals.summary.insideNow')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{summary.activeInside}</p>
+            {isLoading ? <Skeleton className="h-10 w-16" /> : <p className="text-3xl font-semibold">{summary.activeInside}</p>}
           </CardContent>
         </Card>
       </div>
@@ -383,12 +397,13 @@ export default function FiscalsPage() {
         <CardHeader className="pb-0">
           <CardTitle className="text-lg">{t('fiscals.filters.search')}</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-3 pt-4 md:grid-cols-3">
+        <CardContent className="grid gap-3 pt-4 md:grid-cols-5">
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">{t('fiscals.filters.fiscal')}</p>
             <select
               value={fiscalFilter}
               onChange={(e) => setFiscalFilter(e.target.value)}
+              disabled={isLoading}
               className="h-10 w-full rounded-xl border border-input bg-input px-3 text-sm outline-none focus-visible:border-focus-purple focus-visible:ring-1 focus-visible:ring-focus-purple"
             >
               <option value="all">{t('fiscals.filters.fiscalAll')}</option>
@@ -406,6 +421,7 @@ export default function FiscalsPage() {
               onChange={(e) =>
                 setStatusFilter(e.target.value as 'all' | 'activa' | 'cerrada' | 'pendiente')
               }
+              disabled={isLoading}
               className="h-10 w-full rounded-xl border border-input bg-input px-3 text-sm outline-none focus-visible:border-focus-purple focus-visible:ring-1 focus-visible:ring-focus-purple"
             >
               <option value="all">{t('fiscals.filters.statusAll')}</option>
@@ -420,6 +436,25 @@ export default function FiscalsPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={t('fiscals.filters.searchPlaceholder')}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">Fecha desde</p>
+            <Input
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">Fecha hasta</p>
+            <Input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              disabled={isLoading}
             />
           </div>
         </CardContent>
@@ -431,7 +466,11 @@ export default function FiscalsPage() {
         </CardHeader>
         <CardContent className="pt-4">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Cargando...</p>
+            <div className="space-y-2">
+              {[...Array(5)].map((_, idx) => (
+                <Skeleton key={idx} className="h-10 w-full" />
+              ))}
+            </div>
           ) : ranking.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('fiscals.ranking.empty')}</p>
           ) : (
@@ -469,7 +508,11 @@ export default function FiscalsPage() {
         </CardHeader>
         <CardContent className="pt-4">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Cargando...</p>
+            <div className="space-y-2">
+              {[...Array(6)].map((_, idx) => (
+                <Skeleton key={idx} className="h-10 w-full" />
+              ))}
+            </div>
           ) : contributorStats.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('fiscals.table.empty')}</p>
           ) : (
@@ -508,7 +551,11 @@ export default function FiscalsPage() {
         </CardHeader>
         <CardContent className="pt-4">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Cargando...</p>
+            <div className="space-y-2">
+              {[...Array(8)].map((_, idx) => (
+                <Skeleton key={idx} className="h-10 w-full" />
+              ))}
+            </div>
           ) : filteredVisits.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('fiscals.table.empty')}</p>
           ) : (

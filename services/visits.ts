@@ -4,6 +4,7 @@
 
 import { apiRequest } from '@/lib/api/client'
 import { DEFAULT_LOCAL_BACKEND_URL } from '@/utils/constants'
+import { getVenezuelaDate } from '@/utils/formatters'
 import { Visit, VisitHistory, SearchFilters, VisitStatus } from '@/types'
 
 export interface VisitsListResponse {
@@ -32,9 +33,16 @@ export interface CreateVisitRequest {
  * Get visits history with filters for administrative reports
  */
 export async function getVisitsHistory(filters: SearchFilters = {}): Promise<VisitHistory[]> {
+  const normalizedFilters: SearchFilters = { ...filters }
+  if (!normalizedFilters.fecha_desde && !normalizedFilters.fecha_hasta) {
+    const todayVz = getVenezuelaDate()
+    normalizedFilters.fecha_desde = todayVz
+    normalizedFilters.fecha_hasta = todayVz
+  }
+
   const params = new URLSearchParams()
 
-  Object.entries(filters).forEach(([key, value]) => {
+  Object.entries(normalizedFilters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       params.append(key, value.toString())
     }
@@ -135,9 +143,14 @@ export async function getVisits(filters: {
   skip?: number
   limit?: number
 } = {}): Promise<VisitsListResponse> {
+  const normalizedFilters = { ...filters }
+  if (!normalizedFilters.entry_date) {
+    normalizedFilters.entry_date = getVenezuelaDate()
+  }
+
   const params = new URLSearchParams()
 
-  Object.entries(filters).forEach(([key, value]) => {
+  Object.entries(normalizedFilters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       params.append(key, value.toString())
     }
@@ -240,9 +253,7 @@ export interface DashboardAdvancedResponse {
  */
 export async function getDashboardAdvanced(targetDate?: string): Promise<DashboardAdvancedResponse> {
   const params = new URLSearchParams()
-  if (targetDate) {
-    params.append('target_date', targetDate)
-  }
+  params.append('target_date', targetDate || getVenezuelaDate())
 
   const queryString = params.toString()
   const url = `/api/v1/dashboard/advanced${queryString ? `?${queryString}` : ''}`

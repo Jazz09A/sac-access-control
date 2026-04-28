@@ -5,6 +5,7 @@ import { Eye, MoreHorizontal, CheckCircle, LogOut } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -31,6 +32,7 @@ interface ResultsTableProps {
   currentPage?: number
   onMarkAsAttended?: (visitId: string) => void
   onRegisterExit?: (visitId: string) => void
+  processingVisitId?: string | null
 }
 
 export function ResultsTable({
@@ -39,7 +41,8 @@ export function ResultsTable({
   totalCount = 0,
   currentPage = 1,
   onMarkAsAttended,
-  onRegisterExit
+  onRegisterExit,
+  processingVisitId = null,
 }: ResultsTableProps) {
   const router = useRouter()
 
@@ -55,9 +58,18 @@ export function ResultsTable({
 
   if (isLoading) {
     return (
-      <Card className="p-8">
-        <div className="text-center">
-          <p className="text-muted-foreground">Cargando resultados...</p>
+      <Card className="p-6">
+        <div className="space-y-4">
+          {[...Array(6)].map((_, idx) => (
+            <div key={idx} className="grid grid-cols-12 gap-3">
+              <Skeleton className="col-span-2 h-8" />
+              <Skeleton className="col-span-3 h-8" />
+              <Skeleton className="col-span-2 h-8" />
+              <Skeleton className="col-span-2 h-8" />
+              <Skeleton className="col-span-2 h-8" />
+              <Skeleton className="col-span-1 h-8" />
+            </div>
+          ))}
         </div>
       </Card>
     )
@@ -118,7 +130,12 @@ export function ResultsTable({
                 <TableCell className="text-right px-6">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0"
+                        disabled={processingVisitId === visit.id}
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -129,14 +146,20 @@ export function ResultsTable({
                       </DropdownMenuItem>
                       
                       {visit.estado === VisitStatus.WAITING && onMarkAsAttended && (
-                        <DropdownMenuItem onClick={() => onMarkAsAttended(visit.id)}>
+                        <DropdownMenuItem
+                          onClick={() => onMarkAsAttended(visit.id)}
+                          disabled={processingVisitId === visit.id}
+                        >
                           <CheckCircle className="mr-2 h-4 w-4 text-blue-600" />
                           Marcar como Atendido
                         </DropdownMenuItem>
                       )}
                       
                       {(visit.estado === VisitStatus.WAITING || visit.estado === VisitStatus.ATTENDED) && onRegisterExit && (
-                        <DropdownMenuItem onClick={() => onRegisterExit(visit.id)}>
+                        <DropdownMenuItem
+                          onClick={() => onRegisterExit(visit.id)}
+                          disabled={processingVisitId === visit.id}
+                        >
                           <LogOut className="mr-2 h-4 w-4 text-green-600" />
                           Registrar Salida
                         </DropdownMenuItem>
