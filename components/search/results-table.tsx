@@ -45,6 +45,7 @@ export function ResultsTable({
   processingVisitId = null,
 }: ResultsTableProps) {
   const router = useRouter()
+  const safeVisits = Array.isArray(visits) ? visits : []
 
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.WAITING]: 'En Espera',
@@ -75,7 +76,7 @@ export function ResultsTable({
     )
   }
 
-  if (visits.length === 0) {
+  if (safeVisits.length === 0) {
     return (
       <Card className="p-8">
         <div className="text-center">
@@ -103,7 +104,7 @@ export function ResultsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visits.map((visit, index) => (
+            {safeVisits.map((visit) => (
               <TableRow key={visit.id} className="hover:bg-primary/[0.02] transition-colors">
                 <TableCell className="font-mono text-xs font-semibold px-6">
                   {visit.rif}
@@ -176,7 +177,7 @@ export function ResultsTable({
       {/* Pagination Info */}
       <div className="px-6 py-4 border-t text-sm text-muted-foreground">
         <p>
-          Mostrando {visits.length} de {totalCount} resultados{' '}
+          Mostrando {safeVisits.length} de {totalCount} resultados{' '}
           {totalCount > 10 && `(Página ${currentPage})`}
         </p>
       </div>

@@ -14,6 +14,20 @@ export interface VisitsListResponse {
   limit: number
 }
 
+type VisitsHistoryResponse = VisitHistory[] | { data?: VisitHistory[] }
+interface VisitsHistoryPaginatedResponse {
+  total?: number
+  skip?: number
+  limit?: number
+  items?: VisitHistory[]
+  data?: VisitHistory[]
+}
+
+export interface VisitsHistoryResult {
+  items: VisitHistory[]
+  total: number
+}
+
 export interface CreateVisitRequest {
   /** RIF fiscal del contribuyente (obligatorio en el backend) */
   contributor_rif: string
@@ -32,7 +46,7 @@ export interface CreateVisitRequest {
 /**
  * Get visits history with filters for administrative reports
  */
-export async function getVisitsHistory(filters: SearchFilters = {}): Promise<VisitHistory[]> {
+export async function getVisitsHistory(filters: SearchFilters = {}): Promise<VisitsHistoryResult> {
   const normalizedFilters: SearchFilters = { ...filters }
   if (!normalizedFilters.fecha_desde && !normalizedFilters.fecha_hasta) {
     const todayVz = getVenezuelaDate()
@@ -51,7 +65,32 @@ export async function getVisitsHistory(filters: SearchFilters = {}): Promise<Vis
   const queryString = params.toString()
   const url = `/api/v1/visits/history${queryString ? `?${queryString}` : ''}`
 
-  return apiRequest<VisitHistory[]>(url)
+  const response = await apiRequest<VisitsHistoryResponse | VisitsHistoryPaginatedResponse>(url)
+  if (Array.isArray(response)) {
+    return {
+      items: response,
+      total: response.length
+    }
+  }
+
+  if (Array.isArray(response?.items)) {
+    return {
+      items: response.items,
+      total: typeof response.total === 'number' ? response.total : response.items.length
+    }
+  }
+
+  if (Array.isArray(response?.data)) {
+    return {
+      items: response.data,
+      total: typeof response.total === 'number' ? response.total : response.data.length
+    }
+  }
+
+  return {
+    items: [],
+    total: 0
+  }
 }
 
 /**

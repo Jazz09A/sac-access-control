@@ -17,8 +17,8 @@ export default function SearchPage() {
     setIsLoading(true)
     try {
       const data = await getVisitsHistory(filters)
-      setVisitHistory(data || [])
-      setTotalCount(data?.length || 0)
+      setVisitHistory(data.items || [])
+      setTotalCount(data.total || 0)
     } catch (error) {
       console.error('Error fetching visit history:', error)
       // For now, show empty results on error
