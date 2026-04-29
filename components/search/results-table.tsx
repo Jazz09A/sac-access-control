@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Eye, MoreHorizontal, CheckCircle, LogOut } from 'lucide-react'
+import { Eye, MoreHorizontal, CheckCircle, LogOut, Pencil } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -32,6 +32,7 @@ interface ResultsTableProps {
   currentPage?: number
   onMarkAsAttended?: (visitId: string) => void
   onRegisterExit?: (visitId: string) => void
+  onEditVisit?: (visit: VisitHistory) => void
   processingVisitId?: string | null
 }
 
@@ -42,6 +43,7 @@ export function ResultsTable({
   currentPage = 1,
   onMarkAsAttended,
   onRegisterExit,
+  onEditVisit,
   processingVisitId = null,
 }: ResultsTableProps) {
   const router = useRouter()
@@ -145,6 +147,16 @@ export function ResultsTable({
                         <Eye className="mr-2 h-4 w-4" />
                         Ver detalles
                       </DropdownMenuItem>
+
+                      {onEditVisit && (
+                        <DropdownMenuItem
+                          onClick={() => onEditVisit(visit)}
+                          disabled={processingVisitId === visit.id}
+                        >
+                          <Pencil className="mr-2 h-4 w-4 text-amber-600" />
+                          Editar visita
+                        </DropdownMenuItem>
+                      )}
                       
                       {visit.estado === VisitStatus.WAITING && onMarkAsAttended && (
                         <DropdownMenuItem

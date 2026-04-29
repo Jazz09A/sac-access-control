@@ -108,6 +108,20 @@ export interface CreateVisitWithPhotoRequest extends CreateVisitRequest {
   photo: File
 }
 
+export interface UpdateVisitRequest {
+  fiscal_id?: string
+  reason?: string
+  observations?: string
+  received_by?: string
+  department?: string
+  file_number?: string
+  entry_date?: string
+  entry_time?: string
+  exit_date?: string
+  exit_time?: string
+  status?: VisitStatus
+}
+
 /**
  * Create a new visit entry with photo upload
  * Uses multipart/form-data to send the photo file
@@ -177,7 +191,7 @@ export async function getVisits(filters: {
   contributor_id?: number
   rif?: string
   status?: VisitStatus
-  fiscal_id?: number
+  fiscal_id?: number | string
   entry_date?: string
   skip?: number
   limit?: number
@@ -248,6 +262,16 @@ export async function registerVisitExit(visitId: string, data: {
 export async function markVisitAsAttended(visitId: string): Promise<Visit> {
   return apiRequest<Visit>(`/api/v1/visits/${visitId}/attend`, {
     method: 'PATCH'
+  })
+}
+
+/**
+ * Update visit fields using partial payload
+ */
+export async function updateVisit(visitId: string, data: UpdateVisitRequest): Promise<Visit> {
+  return apiRequest<Visit>(`/api/v1/visits/${visitId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data)
   })
 }
 
