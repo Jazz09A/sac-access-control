@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { SearchBar } from '@/components/search/search-bar'
 import { ResultsTable } from '@/components/search/results-table'
 import { Fiscal, SearchFilters, Visit, VisitHistory, VisitStatus } from '@/types'
-import { getVisit, getVisitsHistory, markVisitAsAttended, registerVisitExit, updateVisit } from '@/services/visits'
+import { deleteVisit, getVisit, getVisitsHistory, markVisitAsAttended, registerVisitExit, updateVisit } from '@/services/visits'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -26,6 +26,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { VISIT_REASONS } from '@/utils/constants'
 import { toast } from 'sonner'
 
@@ -35,10 +45,13 @@ export default function SearchPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [processingVisitId, setProcessingVisitId] = useState<string | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [selectedVisit, setSelectedVisit] = useState<VisitHistory | null>(null)
+  const [visitToDelete, setVisitToDelete] = useState<VisitHistory | null>(null)
   const [selectedVisitDetail, setSelectedVisitDetail] = useState<Visit | null>(null)
   const [isLoadingVisitDetail, setIsLoadingVisitDetail] = useState(false)
   const [isSavingEdit, setIsSavingEdit] = useState(false)
+  const [isDeletingVisit, setIsDeletingVisit] = useState(false)
   const [editFiscalId, setEditFiscalId] = useState<number | undefined>(undefined)
   const [selectedFiscal, setSelectedFiscal] = useState<Fiscal | null>(null)
   const [editReason, setEditReason] = useState('')
@@ -228,6 +241,37 @@ export default function SearchPage() {
     setEditFiscalId(fiscal.id)
   }
 
+  const handleOpenDeleteModal = (visit: VisitHistory) => {
+    setVisitToDelete(visit)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleCloseDeleteModal = () => {
+    if (isDeletingVisit) return
+    setIsDeleteModalOpen(false)
+    setVisitToDelete(null)
+  }
+
+  const handleDeleteVisit = async () => {
+    if (!visitToDelete || isDeletingVisit) return
+
+    setIsDeletingVisit(true)
+    setProcessingVisitId(visitToDelete.id)
+    try {
+      await deleteVisit(visitToDelete.id)
+      setVisitHistory((prev) => prev.filter((visit) => visit.id !== visitToDelete.id))
+      setTotalCount((prev) => Math.max(0, prev - 1))
+      toast.success('Visita eliminada correctamente')
+      handleCloseDeleteModal()
+    } catch (error) {
+      console.error('Error deleting visit:', error)
+      toast.error('Error al eliminar la visita')
+    } finally {
+      setIsDeletingVisit(false)
+      setProcessingVisitId(null)
+    }
+  }
+
   return (
     <div className="p-10 max-w-7xl mx-auto space-y-12">
       <div className="space-y-4">
@@ -245,6 +289,7 @@ export default function SearchPage() {
         totalCount={totalCount}
         processingVisitId={processingVisitId}
         onEditVisit={handleOpenEditModal}
+        onDeleteVisit={handleOpenDeleteModal}
         onMarkAsAttended={handleMarkAsAttended}
         onRegisterExit={handleRegisterExit}
       />
@@ -446,6 +491,44 @@ export default function SearchPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={isDeleteModalOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseDeleteModal()
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar visita</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción aplica un borrado lógico y ocultará la visita en listados/reportes.
+              {visitToDelete && (
+                <span className="mt-2 block text-foreground">
+                  Contribuyente: <strong>{visitToDelete.contribuyente}</strong>
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletingVisit}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteVisit}
+              disabled={isDeletingVisit}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {isDeletingVisit ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Eliminar visita'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

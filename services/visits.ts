@@ -276,6 +276,15 @@ export async function updateVisit(visitId: string, data: UpdateVisitRequest): Pr
 }
 
 /**
+ * Soft delete a visit record
+ */
+export async function deleteVisit(visitId: string): Promise<void> {
+  return apiRequest<void>(`/api/v1/visits/${visitId}`, {
+    method: 'DELETE'
+  })
+}
+
+/**
  * Dashboard metrics response from API
  */
 export interface EntradasDia {

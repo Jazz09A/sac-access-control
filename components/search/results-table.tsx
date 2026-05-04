@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Eye, MoreHorizontal, CheckCircle, LogOut, Pencil } from 'lucide-react'
+import { Eye, MoreHorizontal, CheckCircle, LogOut, Pencil, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -33,6 +33,7 @@ interface ResultsTableProps {
   onMarkAsAttended?: (visitId: string) => void
   onRegisterExit?: (visitId: string) => void
   onEditVisit?: (visit: VisitHistory) => void
+  onDeleteVisit?: (visit: VisitHistory) => void
   processingVisitId?: string | null
 }
 
@@ -44,6 +45,7 @@ export function ResultsTable({
   onMarkAsAttended,
   onRegisterExit,
   onEditVisit,
+  onDeleteVisit,
   processingVisitId = null,
 }: ResultsTableProps) {
   const router = useRouter()
@@ -155,6 +157,17 @@ export function ResultsTable({
                         >
                           <Pencil className="mr-2 h-4 w-4 text-amber-600" />
                           Editar visita
+                        </DropdownMenuItem>
+                      )}
+
+                      {onDeleteVisit && (
+                        <DropdownMenuItem
+                          onClick={() => onDeleteVisit(visit)}
+                          disabled={processingVisitId === visit.id}
+                          className="text-red-600 focus:text-red-600"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar visita
                         </DropdownMenuItem>
                       )}
                       
