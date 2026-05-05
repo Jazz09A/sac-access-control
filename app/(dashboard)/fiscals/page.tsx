@@ -261,7 +261,7 @@ export default function FiscalsPage() {
     const html = `
       <html>
         <head>
-          <title>Reporte por fiscal</title>
+          <title>Reporte de visitas</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 24px; color: #111827; }
             h1 { margin: 0 0 8px; }
@@ -285,7 +285,7 @@ export default function FiscalsPage() {
         </head>
         <body>
           <div class="report-header">
-            <h1>REPORTE OPERATIVO DE VISITAS</h1>
+            <h1>REPORTE DE VISITAS</h1>
             <h2>Division de Fiscalizacion - Region Libertador</h2>
             <div class="report-meta">
               <span><strong>Numero de reporte:</strong> ${reportNumber}</span>

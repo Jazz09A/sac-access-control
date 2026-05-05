@@ -118,7 +118,7 @@ export const messages: Record<AppLocale, Record<string, string>> = {
     'nav.dashboard': 'Dashboard',
     'nav.entry': 'Registrar Entrada',
     'nav.search': 'Buscar Visitas',
-    'nav.fiscals': 'Reporte por Fiscal',
+    'nav.fiscals': 'Reporte por fiscal',
     'nav.settings': 'Configuracion',
     'sidebar.brand': 'Control de Ingresos',
     'sidebar.subtitle': 'Consola administrativa',
