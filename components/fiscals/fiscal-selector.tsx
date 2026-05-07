@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Badge } from '@/components/ui/badge'
-import { searchFiscals } from '@/services/fiscals'
+import { searchFiscals, getFiscalById } from '@/services/fiscals'
 import { Fiscal } from '@/types'
 
 const PAGE_SIZE = 20
@@ -125,9 +125,36 @@ export function FiscalSelector({
 
   // Find selected fiscal by ID when value is set externally
   useEffect(() => {
-    if (value && !selectedFiscal) {
-      const found = fiscals.find(f => f.id === value)
-      if (found) setSelectedFiscal(found)
+    if (value) {
+      if (!selectedFiscal || selectedFiscal.id !== value) {
+        const found = fiscals.find(f => f.id === value)
+        if (found) {
+          setSelectedFiscal(found)
+        } else {
+          // If not in the current list, set a placeholder so the UI shows it's selected
+          setSelectedFiscal({
+            id: value,
+            name: `Fiscal (ID: ${value})`,
+            external_id: '',
+            person_id: 0,
+            email: '',
+            group_id: '',
+            supervisor_id: '',
+            status: true
+          })
+          
+          // Try to fetch the real name from the API
+          getFiscalById(value)
+            .then(fiscal => {
+              if (fiscal) setSelectedFiscal(fiscal)
+            })
+            .catch(err => {
+              console.error('Error fetching fiscal by id:', err)
+            })
+        }
+      }
+    } else {
+      setSelectedFiscal(null)
     }
   }, [value, fiscals, selectedFiscal])
 

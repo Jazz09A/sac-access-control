@@ -20,16 +20,19 @@ export const contributorSchema = z.object({
     ContributorType.LEGAL,
     ContributorType.REPRESENTATIVE,
     ContributorType.MANAGER
-  ]),
+  ], {
+    required_error: 'Tipo de contribuyente es requerido',
+    invalid_type_error: 'Debe seleccionar un tipo de contribuyente válido'
+  }),
   occupation: z
     .string()
     .min(1, 'Ocupación es requerida')
     .max(50, 'Ocupación no puede exceder 50 caracteres'),
   phone: z
     .string()
-    .min(1, 'Teléfono es requerido')
-    .regex(/^[\d\-\(\)\s]+$/, 'Formato de teléfono inválido')
-    .min(10, 'Teléfono debe tener al menos 10 dígitos'),
+    .regex(/^[\d\-\(\)\s]*$/, 'Formato de teléfono inválido')
+    .optional()
+    .or(z.literal('')),
   email: z
     .string()
     .email('Email inválido')

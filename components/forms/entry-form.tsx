@@ -107,11 +107,6 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
       'Ocupación'
     )
     checkField(
-      Boolean(errors.contributor?.phone),
-      !contributor?.phone || contributor.phone.trim() === '',
-      'Teléfono'
-    )
-    checkField(
       Boolean(errors.visit?.entryDateTime),
       !visit?.entryDateTime,
       'Fecha y hora'
@@ -132,7 +127,7 @@ export function EntryForm({ onSuccess }: EntryFormProps) {
       incompleteFields.push('Foto del contribuyente')
     }
 
-    const totalFields = 9
+    const totalFields = 8
     const invalidCount = incompleteFields.length + errorFields.length
     const validFields = totalFields - invalidCount
     const isComplete = invalidCount === 0 && photoFile !== null

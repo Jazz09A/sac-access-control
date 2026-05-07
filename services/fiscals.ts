@@ -54,6 +54,13 @@ export async function searchFiscals(params: {
 }
 
 /**
+ * Get a specific fiscal by ID
+ */
+export async function getFiscalById(id: number): Promise<Fiscal> {
+  return apiRequest<Fiscal>(`/api/v1/fiscals/${id}`)
+}
+
+/**
  * Sync fiscals from MySQL/TiDB to PostgreSQL
  */
 export async function syncFiscals(): Promise<FiscalSyncResult> {

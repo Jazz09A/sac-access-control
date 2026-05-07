@@ -5,6 +5,9 @@ import { UseFormRegister, FormState, FieldValues, Path, Control, Controller, use
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Search, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import {
   Select,
   SelectContent,
@@ -13,6 +16,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { CONTRIBUTOR_TYPE_OPTIONS, RIF_PREFIX_OPTIONS } from '@/utils/constants'
+import { getContributorByRif } from '@/services/contributors'
 
 interface ContributorFormProps<T extends FieldValues> {
   register: UseFormRegister<T>
@@ -42,6 +46,7 @@ export function ContributorForm<T extends FieldValues>({
   // Local state for RIF prefix and number
   const [rifPrefix, setRifPrefix] = useState<string>('J')
   const [rifNumber, setRifNumber] = useState<string>('')
+  const [isSearching, setIsSearching] = useState(false)
 
   // Sync local state with form value when it changes externally (e.g., on reset)
   useEffect(() => {
@@ -71,6 +76,47 @@ export function ContributorForm<T extends FieldValues>({
     // setValue is stable from react-hook-form
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rifPrefix, rifNumber])
+
+  const handleSearchRif = async () => {
+    if (!rifNumber || rifNumber.length < 5) return
+
+    const cleanNumber = rifNumber.replace(/[^0-9]/g, '').slice(0, 9)
+    const fullRif = `${rifPrefix}-${cleanNumber}`
+    
+    setIsSearching(true)
+    try {
+      const contributor = await getContributorByRif(fullRif)
+      
+      if (setValue) {
+        setValue('contributor.name', contributor.name, { shouldValidate: true })
+        if (contributor.type) {
+          setValue('contributor.type', contributor.type, { shouldValidate: true })
+        }
+        setValue('contributor.occupation', contributor.occupation || '', { shouldValidate: true })
+        setValue('contributor.phone', contributor.phone || '', { shouldValidate: true })
+        setValue('contributor.email', contributor.email || '', { shouldValidate: true })
+        
+        // Auto-fill visit fields with last known values if present
+        if (contributor.last_fiscal_id) {
+          setValue('visit.fiscalId', contributor.last_fiscal_id, { shouldValidate: true })
+        }
+        if (contributor.last_reason) {
+          setValue('visit.reason', contributor.last_reason, { shouldValidate: true })
+        }
+      }
+      
+      toast.success('Contribuyente encontrado. Los datos han sido autocompletados. Puede modificarlos si es necesario.')
+    } catch (error: any) {
+      // Si es un error de no encontrado (404), es normal si es nuevo
+      if (error?.message?.includes('404') || error?.status === 404) {
+        toast.info('Contribuyente no registrado. Por favor complete los datos.')
+      } else {
+        toast.error('Error al buscar el contribuyente.')
+      }
+    } finally {
+      setIsSearching(false)
+    }
+  }
 
   return (
     <Card className="border-border/70 bg-card">
@@ -111,25 +157,46 @@ export function ContributorForm<T extends FieldValues>({
                   ))}
                 </SelectContent>
               </Select>
-              <Input
-                id="rif"
-                placeholder="98765432"
-                value={rifNumber}
-                onChange={(e) => {
-                  const cleanValue = e.target.value.replace(/[^0-9]/g, '').slice(0, 9)
-                  setRifNumber(cleanValue)
-                }}
-                className="flex-1 bg-background"
-                aria-invalid={Boolean(getFieldError('contributor.rif'))}
-              />
+              <div className="relative flex-1 flex gap-2">
+                <Input
+                  id="rif"
+                  placeholder="98765432"
+                  value={rifNumber}
+                  onBlur={handleSearchRif}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleSearchRif()
+                    }
+                  }}
+                  onChange={(e) => {
+                    const cleanValue = e.target.value.replace(/[^0-9]/g, '').slice(0, 9)
+                    setRifNumber(cleanValue)
+                  }}
+                  className="flex-1 bg-background"
+                  aria-invalid={Boolean(getFieldError('contributor.rif'))}
+                />
+                <Button 
+                  type="button" 
+                  variant="secondary" 
+                  size="icon" 
+                  onClick={handleSearchRif}
+                  disabled={isSearching || !rifNumber || rifNumber.length < 5}
+                  className="shrink-0"
+                  title="Buscar Contribuyente"
+                >
+                  {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
             {getFieldError('contributor.rif') && (
               <p className="text-xs text-destructive">
                 {getFieldError('contributor.rif')}
               </p>
             )}
-            <p className="text-[11px] text-muted-foreground">
-              {rifPrefix}-{rifNumber || '________'}
+            <p className="text-[11px] text-muted-foreground flex items-center justify-between">
+              <span>{rifPrefix}-{rifNumber || '________'}</span>
+              <span>Busca el RIF para autocompletar</span>
             </p>
           </div>
 
@@ -213,7 +280,7 @@ export function ContributorForm<T extends FieldValues>({
 
             <div className="space-y-2">
               <Label htmlFor="phone" className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-                Telefono <span className="text-destructive">*</span>
+                Telefono
               </Label>
               <Input
                 id="phone"
@@ -253,3 +320,4 @@ export function ContributorForm<T extends FieldValues>({
     </Card>
   )
 }
+

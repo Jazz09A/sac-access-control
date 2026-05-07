@@ -1,0 +1,23 @@
+services/mock-data.ts(58,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(76,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(77,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(78,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(98,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(116,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(117,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(118,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/mock-data.ts(138,5): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+services/visits.ts(76,31): error TS2339: Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(78,23): error TS2339: Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(79,30): error TS2339: Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(79,60): error TS2339: Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(79,77): error TS2339: Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'items' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(86,30): error TS2339: Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
+services/visits.ts(86,60): error TS2339: Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; } | VisitsHistoryPaginatedResponse'.
+  Property 'total' does not exist on type '{ data?: VisitHistory[] | undefined; }'.
