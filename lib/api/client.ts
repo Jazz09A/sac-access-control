@@ -1,3 +1,4 @@
+import { getAccessToken } from '@/lib/api/auth-token'
 import { DEFAULT_LOCAL_BACKEND_URL } from '@/utils/constants'
 
 export class ApiError extends Error {
@@ -12,7 +13,7 @@ export class ApiError extends Error {
   }
 }
 
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   // Client-side: only NEXT_PUBLIC_* variables are available
   // Server-side: both NEXT_PUBLIC_BACKEND_URL and BACKEND_URL are available
   const isServer = typeof window === 'undefined'
@@ -40,6 +41,13 @@ export async function apiRequest<T>(
 
   if (init.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
+  }
+
+  if (!headers.has('Authorization')) {
+    const token = await getAccessToken()
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
   }
 
   const response = await fetch(buildUrl(path), {

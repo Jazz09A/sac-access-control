@@ -4,29 +4,41 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  LogIn,
   Search,
   Settings,
   ShieldCheck,
   Command,
   Sparkles,
   UserCheck,
+  ScanFace,
+  Ticket,
+  Package,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { filterNavByPreviewRole } from '@/lib/dev-role-preview'
 import { Button } from '@/components/ui/button'
 import { useLocale } from '@/components/providers/locale-provider'
+import { useDevRolePreview } from '@/components/providers/dev-role-preview-provider'
 
 const navConfig = [
   { href: '/', msgKey: 'nav.dashboard' as const, icon: LayoutDashboard },
-  { href: '/entry', msgKey: 'nav.entry' as const, icon: LogIn },
+  { href: '/gate', msgKey: 'nav.gate' as const, icon: ScanFace },
+  { href: '/desk', msgKey: 'nav.desk' as const, icon: Ticket },
+  { href: '/assets', msgKey: 'nav.assets' as const, icon: Package },
   { href: '/search', msgKey: 'nav.search' as const, icon: Search },
   { href: '/fiscals', msgKey: 'nav.fiscals' as const, icon: UserCheck },
   { href: '/settings', msgKey: 'nav.settings' as const, icon: Settings },
 ]
 
+function usePreviewNav() {
+  const { role } = useDevRolePreview()
+  return filterNavByPreviewRole(navConfig, role)
+}
+
 export function Sidebar() {
   const pathname = usePathname()
   const { t } = useLocale()
+  const items = usePreviewNav()
 
   return (
     <aside className="hidden min-h-full w-[248px] flex-col border-r border-white/8 bg-sidebar px-3 py-4 lg:flex xl:w-[272px] xl:px-4 xl:py-5">
@@ -60,7 +72,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 space-y-1 px-2">
-        {navConfig.map((item) => {
+        {items.map((item) => {
           const isActive =
             item.href === '/'
               ? pathname === '/'
@@ -103,11 +115,12 @@ export function Sidebar() {
 export function MobileNav() {
   const pathname = usePathname()
   const { t } = useLocale()
+  const items = usePreviewNav()
 
   return (
     <div className="border-b border-white/8 px-4 py-3 lg:hidden">
       <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2">
-        {navConfig.map((item) => {
+        {items.map((item) => {
           const isActive =
             item.href === '/'
               ? pathname === '/'

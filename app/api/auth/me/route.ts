@@ -6,12 +6,14 @@ const COOKIE = 'sac_token'
 const USER_NAME_COOKIE = 'sac_user_name'
 
 type MePayload = {
+  id?: string | null
   username: string | null
   fullName?: string | null
   role?: string | null
 }
 
 type BackendMeResponse = {
+  id?: string
   person_id: string
   full_name: string
   role: string
@@ -84,6 +86,7 @@ export async function GET() {
   // console.log('[API Me] Backend user:', backendUser)
 
   const payload: MePayload = {
+    id: backendUser?.id ?? null,
     username: personId,
     fullName: storedUserName || backendUser?.full_name || null,
     role: backendUser?.role || null,

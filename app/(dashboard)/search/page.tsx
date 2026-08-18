@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react'
 import { SearchBar } from '@/components/search/search-bar'
 import { ResultsTable } from '@/components/search/results-table'
 import { Fiscal, SearchFilters, Visit, VisitHistory, VisitStatus } from '@/types'
-import { deleteVisit, getVisit, getVisitsHistory, markVisitAsAttended, registerVisitExit, updateVisit } from '@/services/visits'
+import { deleteVisit, getVisit, getVisitsHistory, updateVisit } from '@/services/visits'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -84,48 +84,6 @@ export default function SearchPage() {
       setTotalCount(0)
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const handleMarkAsAttended = async (visitId: string) => {
-    setProcessingVisitId(visitId)
-    try {
-      await markVisitAsAttended(visitId)
-      toast.success('Visita marcada como atendida')
-      // Refresh the search results
-      setVisitHistory(prev => prev.map(visit => 
-        visit.id === visitId 
-          ? { ...visit, estado: VisitStatus.ATTENDED }
-          : visit
-      ))
-    } catch (error) {
-      console.error('Error marking as attended:', error)
-      toast.error('Error al marcar como atendido')
-    } finally {
-      setProcessingVisitId(null)
-    }
-  }
-
-  const handleRegisterExit = async (visitId: string) => {
-    setProcessingVisitId(visitId)
-    try {
-      const now = new Date()
-      const exitDate = now.toISOString().split('T')[0]
-      const exitTime = now.toTimeString().slice(0, 8)
-
-      await registerVisitExit(visitId, {
-        exit_date: exitDate,
-        exit_time: exitTime,
-        status: VisitStatus.FINISHED
-      })
-      toast.success('Salida registrada correctamente')
-      // Refresh the search results
-      setVisitHistory(prev => prev.filter(visit => visit.id !== visitId))
-    } catch (error) {
-      console.error('Error registering exit:', error)
-      toast.error('Error al registrar la salida')
-    } finally {
-      setProcessingVisitId(null)
     }
   }
 
@@ -290,8 +248,6 @@ export default function SearchPage() {
         processingVisitId={processingVisitId}
         onEditVisit={handleOpenEditModal}
         onDeleteVisit={handleOpenDeleteModal}
-        onMarkAsAttended={handleMarkAsAttended}
-        onRegisterExit={handleRegisterExit}
       />
 
       <Dialog open={isEditModalOpen} onOpenChange={(open) => !open && handleCloseEditModal()}>

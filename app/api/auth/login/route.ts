@@ -16,30 +16,6 @@ function backendLoginUrl(base: string) {
   return `${normalizeBackendOrigin(base)}/api/v1/auth/login`
 }
 
-async function getUserFullName(base: string, personId: string) {
-  const url = `${normalizeBackendOrigin(base)}/api/v1/users/?skip=0&limit=100`
-
-  try {
-    const response = await fetch(url, {
-      cache: 'no-store',
-      headers: { Accept: 'application/json' },
-    })
-
-    if (!response.ok) {
-      return null
-    }
-
-    const users = (await response.json().catch(() => [])) as Array<{
-      person_id: string
-      full_name: string
-    }>
-
-    return users.find((user) => user.person_id === personId)?.full_name ?? null
-  } catch {
-    return null
-  }
-}
-
 export async function POST(request: Request) {
   const backendRaw = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
   const backend = normalizeBackendOrigin(backendRaw)
@@ -130,6 +106,7 @@ export async function POST(request: Request) {
   }
 
   const accessToken = (data as { access_token?: string }).access_token
+  const loginFullName = (data as { full_name?: string }).full_name
   //  console.log('[API Login] access_token presente:', !!accessToken)
   //  console.log('[API Login] Data recibida del backend:', JSON.stringify(data, null, 2).substring(0, 500))
 
@@ -142,7 +119,7 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ ok: true })
   const maxAge = 60 * 30 // 30 minutos
-  const fullName = body.username ? await getUserFullName(backendRaw, body.username) : null
+  const fullName = loginFullName || body.username || null
 
   // Determinar configuración de cookies según el entorno
   const isProduction = process.env.NODE_ENV === 'production'

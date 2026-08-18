@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Eye, MoreHorizontal, CheckCircle, LogOut, Pencil, Trash2 } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -22,7 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { VisitHistory, VisitStatus } from '@/types'
 import { formatDateTime } from '@/utils/formatters'
-import { STATUS_COLORS } from '@/utils/constants'
 
 interface ResultsTableProps {
   visits: VisitHistory[]
@@ -30,8 +29,6 @@ interface ResultsTableProps {
   totalCount?: number
   onPageChange?: (page: number) => void
   currentPage?: number
-  onMarkAsAttended?: (visitId: string) => void
-  onRegisterExit?: (visitId: string) => void
   onEditVisit?: (visit: VisitHistory) => void
   onDeleteVisit?: (visit: VisitHistory) => void
   processingVisitId?: string | null
@@ -42,8 +39,6 @@ export function ResultsTable({
   isLoading = false,
   totalCount = 0,
   currentPage = 1,
-  onMarkAsAttended,
-  onRegisterExit,
   onEditVisit,
   onDeleteVisit,
   processingVisitId = null,
@@ -53,8 +48,11 @@ export function ResultsTable({
 
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.WAITING]: 'En Espera',
+    [VisitStatus.IN_SERVICE]: 'En atención',
     [VisitStatus.ATTENDED]: 'Atendida',
-    [VisitStatus.FINISHED]: 'Finalizado'
+    [VisitStatus.INCOMPLETE]: 'Incompleto',
+    [VisitStatus.REFERRED]: 'Remitido',
+    [VisitStatus.FINISHED]: 'Finalizado',
   }
 
   const handleViewDetails = (visitId: string) => {
@@ -168,26 +166,6 @@ export function ResultsTable({
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Eliminar visita
-                        </DropdownMenuItem>
-                      )}
-                      
-                      {visit.estado === VisitStatus.WAITING && onMarkAsAttended && (
-                        <DropdownMenuItem
-                          onClick={() => onMarkAsAttended(visit.id)}
-                          disabled={processingVisitId === visit.id}
-                        >
-                          <CheckCircle className="mr-2 h-4 w-4 text-blue-600" />
-                          Marcar como Atendido
-                        </DropdownMenuItem>
-                      )}
-                      
-                      {(visit.estado === VisitStatus.WAITING || visit.estado === VisitStatus.ATTENDED) && onRegisterExit && (
-                        <DropdownMenuItem
-                          onClick={() => onRegisterExit(visit.id)}
-                          disabled={processingVisitId === visit.id}
-                        >
-                          <LogOut className="mr-2 h-4 w-4 text-green-600" />
-                          Registrar Salida
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuContent>

@@ -72,6 +72,42 @@ export function formatTimeAgoLocale(date: Date | string, locale: AppLocale): str
   })
 }
 
+/** Permanencia de garita: mm:ss si es < 1 h; si no, “Xh Ym”. */
+export const formatStaySeconds = (seconds: number | null | undefined): string => {
+  if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) {
+    return '—'
+  }
+
+  const total = Math.max(0, Math.floor(Number(seconds)))
+  if (total >= 3600) {
+    const hours = Math.floor(total / 3600)
+    const minutes = Math.floor((total % 3600) / 60)
+    return `${hours}h ${minutes}m`
+  }
+
+  const minutes = Math.floor(total / 60)
+  const secs = total % 60
+  return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+}
+
+/** Format seconds as mm:ss (or h:mm:ss). Nullish values render as an em dash. */
+export const formatClockSeconds = (seconds: number | null | undefined): string => {
+  if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) {
+    return '—'
+  }
+
+  const total = Math.max(0, Math.floor(Number(seconds)))
+  const hours = Math.floor(total / 3600)
+  const minutes = Math.floor((total % 3600) / 60)
+  const secs = total % 60
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+  }
+
+  return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+}
+
 export const formatDuration = (startDate: Date | string, endDate: Date | string): string => {
   const start = typeof startDate === 'string' ? new Date(startDate) : startDate
   const end = typeof endDate === 'string' ? new Date(endDate) : endDate

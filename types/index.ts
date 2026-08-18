@@ -11,9 +11,20 @@ export enum ContributorType {
 
 export enum VisitStatus {
   WAITING = 'espera',
+  IN_SERVICE = 'en_atencion',
   ATTENDED = 'atendido',
+  INCOMPLETE = 'incompleto',
+  REFERRED = 'remitido',
   FINISHED = 'finalizado'
 }
+
+export const VISIT_CLOSE_STATUSES = [
+  VisitStatus.ATTENDED,
+  VisitStatus.INCOMPLETE,
+  VisitStatus.REFERRED,
+] as const
+
+export type VisitCloseStatus = (typeof VISIT_CLOSE_STATUSES)[number]
 
 export interface Contributor {
   id: string
@@ -36,10 +47,13 @@ export interface VisitPhoto {
 export interface Visit {
   id: string
   contributor_id: number
-  contributor_name: string
+  contributor_name?: string | null
+  contributor_cedula?: string | null
+  contributor_rif?: string | null
+  ticket_no?: string | null
   fiscal_id: number
   fiscal_name?: string
-  reason: string
+  reason?: string | null
   observations?: string
   received_by: string
   responsible_person: string
@@ -52,6 +66,11 @@ export interface Visit {
   signature_image_url?: string
   status: VisitStatus
   created_at: string
+  called_at?: string | null
+  closed_at?: string | null
+  wait_seconds?: number | null
+  attention_seconds?: number | null
+  stay_seconds?: number | null
   photos?: VisitPhoto[]
 }
 

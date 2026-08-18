@@ -3,6 +3,7 @@ import { ContributorType } from '@/types'
 export interface Contributor {
   id: number | string
   rif: string
+  cedula?: string | null
   name: string
   type: ContributorType
   occupation: string

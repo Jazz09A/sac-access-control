@@ -129,7 +129,7 @@ export function LoginForm() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="h-11 rounded-xl border-white/10 bg-background/50 pl-10"
-                placeholder="Ej. 19344555"
+                placeholder="V00000000"
                 required
               />
             </div>

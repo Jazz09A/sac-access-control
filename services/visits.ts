@@ -2,10 +2,11 @@
  * Visits API Service
  */
 
-import { apiRequest } from '@/lib/api/client'
+import { ApiError, apiRequest } from '@/lib/api/client'
+import { getAccessToken } from '@/lib/api/auth-token'
 import { DEFAULT_LOCAL_BACKEND_URL } from '@/utils/constants'
 import { getVenezuelaDate } from '@/utils/formatters'
-import { Visit, VisitHistory, SearchFilters, VisitStatus } from '@/types'
+import { Visit, VisitHistory, SearchFilters, VisitStatus, type VisitCloseStatus } from '@/types'
 
 export interface VisitsListResponse {
   data: Visit[]
@@ -104,7 +105,18 @@ export async function createVisit(data: CreateVisitRequest): Promise<Visit> {
   })
 }
 
-export interface CreateVisitWithPhotoRequest extends CreateVisitRequest {
+export interface CreateVisitWithPhotoRequest {
+  contributor_cedula?: string
+  contributor_rif?: string
+  contributor_name?: string
+  responsible_person?: string
+  fiscal_id?: number | string
+  reason?: string
+  observations?: string
+  department: string
+  file_number?: string
+  entry_date?: string
+  entry_time?: string
   photo: File
 }
 
@@ -128,29 +140,20 @@ export interface UpdateVisitRequest {
  */
 export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): Promise<Visit> {
   const formData = new FormData()
-
-  // Add all text fields (contributor_rif es obligatorio en POST /api/v1/visits/)
-  formData.append('contributor_rif', data.contributor_rif.trim())
-  formData.append('contributor_name', data.contributor_name)
-  formData.append('responsible_person', data.responsible_person)
-  formData.append('fiscal_id', String(data.fiscal_id))
-  formData.append('reason', data.reason)
-  formData.append('entry_date', data.entry_date)
-  formData.append('entry_time', data.entry_time)
-
-  // Add optional fields if present
-  if (data.observations) {
-    formData.append('observations', data.observations)
+  if (data.contributor_cedula?.trim()) {
+    formData.append('contributor_cedula', data.contributor_cedula.trim())
   }
-  if (data.department) {
-    formData.append('department', data.department)
-  }
-  if (data.file_number) {
-    formData.append('file_number', data.file_number)
-  }
-
-  // Add photo file
+  formData.append('department', data.department)
   formData.append('photo', data.photo)
+  if (data.contributor_rif?.trim()) formData.append('contributor_rif', data.contributor_rif.trim())
+  if (data.contributor_name) formData.append('contributor_name', data.contributor_name)
+  if (data.responsible_person) formData.append('responsible_person', data.responsible_person)
+  if (data.fiscal_id != null && data.fiscal_id !== '') formData.append('fiscal_id', String(data.fiscal_id))
+  if (data.reason) formData.append('reason', data.reason)
+  if (data.observations) formData.append('observations', data.observations)
+  if (data.file_number) formData.append('file_number', data.file_number)
+  if (data.entry_date) formData.append('entry_date', data.entry_date)
+  if (data.entry_time) formData.append('entry_time', data.entry_time)
 
   // Misma lógica que lib/api/client: en el navegador solo existe NEXT_PUBLIC_*; si no, localhost.
   const baseUrl =
@@ -159,9 +162,16 @@ export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): P
     || DEFAULT_LOCAL_BACKEND_URL
 
   // Send request without Content-Type header (browser sets it with boundary)
+  const token = await getAccessToken()
+  const headers = new Headers()
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
+
   const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/api/v1/visits/`, {
     method: 'POST',
     body: formData,
+    headers,
     cache: 'no-store'
   })
 
@@ -178,7 +188,11 @@ export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): P
     } catch {
       detail = undefined
     }
-    throw new Error(detail || `La solicitud falló con código ${response.status}`)
+    throw new ApiError(
+      detail || `La solicitud falló con código ${response.status}`,
+      response.status,
+      detail,
+    )
   }
 
   return response.json()
@@ -189,30 +203,139 @@ export async function createVisitWithPhoto(data: CreateVisitWithPhotoRequest): P
  */
 export async function getVisits(filters: {
   contributor_id?: number
+  cedula?: string
   rif?: string
   status?: VisitStatus
   fiscal_id?: number | string
   entry_date?: string
+  open?: boolean
   skip?: number
   limit?: number
 } = {}): Promise<VisitsListResponse> {
   const normalizedFilters = { ...filters }
-  if (!normalizedFilters.entry_date) {
+  if (!normalizedFilters.open && !normalizedFilters.entry_date) {
     normalizedFilters.entry_date = getVenezuelaDate()
   }
 
   const params = new URLSearchParams()
 
   Object.entries(normalizedFilters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      params.append(key, value.toString())
+    if (value === undefined || value === null || value === '') return
+    if (typeof value === 'boolean') {
+      if (value) params.append(key, 'true')
+      return
     }
+    params.append(key, value.toString())
   })
 
   const queryString = params.toString()
   const url = `/api/v1/visits${queryString ? `?${queryString}` : ''}`
 
-  return apiRequest<VisitsListResponse>(url)
+  const response = await apiRequest<Visit[] | VisitsListResponse>(url)
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      total: response.length,
+      skip: normalizedFilters.skip ?? 0,
+      limit: normalizedFilters.limit ?? response.length,
+    }
+  }
+
+  return {
+    data: Array.isArray(response.data) ? response.data : [],
+    total: typeof response.total === 'number' ? response.total : (response.data?.length ?? 0),
+    skip: typeof response.skip === 'number' ? response.skip : (normalizedFilters.skip ?? 0),
+    limit: typeof response.limit === 'number' ? response.limit : (normalizedFilters.limit ?? 100),
+  }
+}
+
+export interface VisitDayMetrics {
+  target_date: string
+  waiting: number
+  in_service: number
+  closed: number
+  exited: number
+  avg_wait_seconds: number | null
+  avg_attention_seconds: number | null
+  avg_stay_seconds: number | null
+}
+
+export interface CloseVisitRequest {
+  status: VisitCloseStatus
+  observations?: string
+}
+
+export interface IntakeVisitRequest {
+  name: string
+  reason: string
+  rif?: string
+}
+
+/**
+ * FIFO queue for a department: waiting + in service, oldest first.
+ */
+export async function getVisitQueue(department?: string): Promise<Visit[]> {
+  const params = new URLSearchParams()
+  if (department) {
+    params.set('department', department)
+  }
+  const queryString = params.toString()
+  const url = `/api/v1/visits/queue${queryString ? `?${queryString}` : ''}`
+  const response = await apiRequest<Visit[] | VisitsListResponse>(url)
+  if (Array.isArray(response)) return response
+  return Array.isArray(response.data) ? response.data : []
+}
+
+/**
+ * Move a waiting visit to in-service and stamp called_at.
+ */
+export async function callVisit(visitId: string): Promise<Visit> {
+  return apiRequest<Visit>(`/api/v1/visits/${visitId}/call`, {
+    method: 'PATCH',
+  })
+}
+
+/**
+ * Complete identity and reason for an in-service visit before close.
+ */
+export async function intakeVisit(visitId: string, data: IntakeVisitRequest): Promise<Visit> {
+  const payload: IntakeVisitRequest = {
+    name: data.name.trim(),
+    reason: data.reason.trim(),
+  }
+  const rif = data.rif?.trim()
+  if (rif) {
+    payload.rif = rif
+  }
+  return apiRequest<Visit>(`/api/v1/visits/${visitId}/intake`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+/**
+ * Close an in-service visit as attended, incomplete, or referred.
+ */
+export async function closeVisit(visitId: string, data: CloseVisitRequest): Promise<Visit> {
+  const payload: CloseVisitRequest = { status: data.status }
+  const notes = data.observations?.trim()
+  if (notes) {
+    payload.observations = notes
+  }
+  return apiRequest<Visit>(`/api/v1/visits/${visitId}/close`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+/**
+ * Day metrics for gerencia: occupancy, closed counts, and average times.
+ */
+export async function getVisitDayMetrics(targetDate?: string): Promise<VisitDayMetrics> {
+  const params = new URLSearchParams()
+  params.append('target_date', targetDate || getVenezuelaDate())
+  const queryString = params.toString()
+  return apiRequest<VisitDayMetrics>(`/api/v1/visits/metrics?${queryString}`)
 }
 
 /**
@@ -241,17 +364,16 @@ export async function getVisit(visitId: string): Promise<Visit> {
 }
 
 /**
- * Register visit exit
- * Status must be VisitStatus.FINISHED ('finalizado')
+ * Register visit exit. Backend stamps finalizado + exit_at.
  */
-export async function registerVisitExit(visitId: string, data: {
-  exit_date: string
-  exit_time: string
-  status: VisitStatus.FINISHED
+export async function registerVisitExit(visitId: string, data?: {
+  exit_date?: string
+  exit_time?: string
+  status?: VisitStatus.FINISHED
 }): Promise<Visit> {
   return apiRequest<Visit>(`/api/v1/visits/${visitId}/exit`, {
     method: 'PATCH',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data ?? {}),
   })
 }
 

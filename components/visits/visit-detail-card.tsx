@@ -11,13 +11,19 @@ interface VisitDetailCardProps {
 export function VisitDetailCard({ visit }: VisitDetailCardProps) {
   const statusLabel: Record<VisitStatus, string> = {
     [VisitStatus.WAITING]: 'En Espera',
+    [VisitStatus.IN_SERVICE]: 'En atención',
     [VisitStatus.ATTENDED]: 'Atendida',
+    [VisitStatus.INCOMPLETE]: 'Incompleto',
+    [VisitStatus.REFERRED]: 'Remitido',
     [VisitStatus.FINISHED]: 'Finalizado'
   }
 
   const statusClassName: Record<VisitStatus, string> = {
     [VisitStatus.WAITING]: 'border-yellow-200 bg-yellow-50 text-yellow-700',
+    [VisitStatus.IN_SERVICE]: 'border-sky-200 bg-sky-50 text-sky-700',
     [VisitStatus.ATTENDED]: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    [VisitStatus.INCOMPLETE]: 'border-orange-200 bg-orange-50 text-orange-700',
+    [VisitStatus.REFERRED]: 'border-violet-200 bg-violet-50 text-violet-700',
     [VisitStatus.FINISHED]: 'border-green-200 bg-green-50 text-green-700'
   }
 

@@ -25,15 +25,23 @@ export const CONTRIBUTOR_TYPE_OPTIONS = [
 
 export const VISIT_STATUS_OPTIONS = [
   { value: VisitStatus.WAITING, label: 'En Espera' },
+  { value: VisitStatus.IN_SERVICE, label: 'En atención' },
   { value: VisitStatus.ATTENDED, label: 'Atendida' },
+  { value: VisitStatus.INCOMPLETE, label: 'Incompleto' },
+  { value: VisitStatus.REFERRED, label: 'Remitido' },
   { value: VisitStatus.FINISHED, label: 'Finalizado' }
 ]
 
 export const STATUS_COLORS: Record<VisitStatus, string> = {
   [VisitStatus.WAITING]: 'bg-yellow-100 text-yellow-800',
+  [VisitStatus.IN_SERVICE]: 'bg-sky-100 text-sky-800',
   [VisitStatus.ATTENDED]: 'bg-emerald-100 text-emerald-800',
+  [VisitStatus.INCOMPLETE]: 'bg-orange-100 text-orange-800',
+  [VisitStatus.REFERRED]: 'bg-violet-100 text-violet-800',
   [VisitStatus.FINISHED]: 'bg-green-100 text-green-800'
 }
+
+export const DESK_DEPARTMENT_STORAGE_KEY = 'sac_desk_department'
 
 export const DEPARTMENTS = [
   'Administración',

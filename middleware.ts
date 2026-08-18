@@ -8,7 +8,11 @@ export async function middleware(request: NextRequest) {
   const secret = process.env.AUTH_JWT_SECRET
   const { pathname } = request.nextUrl
   const token = request.cookies.get(COOKIE)?.value
-  const shouldVerifyJwt = process.env.NODE_ENV === 'production' && !!secret
+  if (process.env.NODE_ENV === 'production' && !secret) {
+    throw new Error('AUTH_JWT_SECRET es obligatorio en producción')
+  }
+
+  const shouldVerifyJwt = process.env.NODE_ENV === 'production'
 
   // Logs de debugging
   // console.log('[Middleware] ========== REQUEST ==========')
@@ -81,5 +85,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)'],
+  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico|vendor/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|mjs|wasm|task)$).*)'],
 }
